@@ -4,6 +4,8 @@
 out/
 .idea/
 *.log
+*.jar
+*.war
 
 # System specific
 .DS_Store
