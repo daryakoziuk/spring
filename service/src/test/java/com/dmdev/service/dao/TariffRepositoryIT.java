@@ -19,7 +19,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class TariffRepositoryIT {
 
     private static final SessionFactory sessionFactory = HibernateTestUtil.buildSessionFactory();
-    private final TariffRepository tariffRepository = new TariffRepository(sessionFactory.getCurrentSession());
+    private final TariffRepository tariffRepository;
+
+    public TariffRepositoryIT(TariffRepository tariffRepository) {
+        this.tariffRepository = tariffRepository;
+    }
 
     @BeforeAll
     static void initDb() {
@@ -69,7 +73,7 @@ public class TariffRepositoryIT {
         session.flush();
         session.clear();
 
-        tariffRepository.delete(tariff.getId());
+        tariffRepository.delete(tariff);
         session.flush();
         Tariff actual = session.find(Tariff.class, tariff.getId());
 

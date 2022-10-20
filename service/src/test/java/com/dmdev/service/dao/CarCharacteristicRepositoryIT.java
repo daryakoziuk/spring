@@ -20,8 +20,14 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class CarCharacteristicRepositoryIT {
 
     private static final SessionFactory sessionFactory = HibernateTestUtil.buildSessionFactory();
-    private final CarCharacteristicRepository carCharacteristicRepository = new CarCharacteristicRepository(sessionFactory.getCurrentSession());
-    private final CarRepository carRepository = new CarRepository(sessionFactory.getCurrentSession());
+    private final CarCharacteristicRepository carCharacteristicRepository;
+    private final CarRepository carRepository;
+
+    public CarCharacteristicRepositoryIT(CarCharacteristicRepository carCharacteristicRepository,
+                                         CarRepository carRepository) {
+        this.carCharacteristicRepository = carCharacteristicRepository;
+        this.carRepository = carRepository;
+    }
 
     @BeforeAll
     static void initDb() {
@@ -78,7 +84,7 @@ public class CarCharacteristicRepositoryIT {
         carRepository.save(car);
         session.clear();
 
-        carCharacteristicRepository.delete(carCharacteristic.getId());
+        carCharacteristicRepository.delete(carCharacteristic);
         var actual = session.find(CarCharacteristic.class, carCharacteristic.getId());
 
         assertThat(actual).isNull();

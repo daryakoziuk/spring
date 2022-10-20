@@ -4,6 +4,7 @@ import com.querydsl.core.types.ExpressionUtils;
 import com.querydsl.core.types.Predicate;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import org.apache.commons.collections.CollectionUtils;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -28,7 +29,7 @@ public class QPredicate {
 
     public <T> QPredicate add(Collection<? extends T> collection,
                               Function<Collection<? extends T>, Predicate> function) {
-        if (!collection.isEmpty()) {
+        if (CollectionUtils.isNotEmpty(collection)) {
             predicates.add(function.apply(collection));
         }
         return this;

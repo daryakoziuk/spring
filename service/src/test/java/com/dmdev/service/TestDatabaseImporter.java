@@ -91,7 +91,9 @@ public class TestDatabaseImporter {
                 .build();
     }
 
-    private Tariff saveTariff(Session session, TariffType type, BigDecimal price) {
+    private Tariff saveTariff(Session session,
+                              TariffType type,
+                              BigDecimal price) {
         Tariff tariff = Tariff.builder()
                 .price(price)
                 .type(type)
@@ -100,9 +102,12 @@ public class TestDatabaseImporter {
         return tariff;
     }
 
-    private User saveUser(Session session, String username,
-                          String firstname, String lastname,
-                          String password, Role role) {
+    private User saveUser(Session session,
+                          String username,
+                          String firstname,
+                          String lastname,
+                          String password,
+                          Role role) {
         User user = User.builder()
                 .personalInfo(PersonalInfo.builder()
                         .firstname(firstname)
@@ -116,7 +121,9 @@ public class TestDatabaseImporter {
         return user;
     }
 
-    private Car saveCar(Session session, String model, Status status,
+    private Car saveCar(Session session,
+                        String model,
+                        Status status,
                         CarCharacteristic carCharacteristic) {
         Car car = Car.builder()
                 .model(model)
@@ -128,7 +135,8 @@ public class TestDatabaseImporter {
     }
 
     private CarCharacteristic saveCarCharacteristic(Session session,
-                                                    Integer engineVolume, TypeFuel type,
+                                                    Integer engineVolume,
+                                                    TypeFuel type,
                                                     TypeTransmission transmission,
                                                     LocalDate dateRelease) {
         CarCharacteristic carCharacteristic = CarCharacteristic.builder()
@@ -145,8 +153,12 @@ public class TestDatabaseImporter {
         carCharacteristic.setCar(car);
     }
 
-    private void saveRequest(Session session, LocalDateTime dateRequest, LocalDateTime dateReturn,
-                             Tariff tariff, Car car, User user) {
+    private void saveRequest(Session session,
+                             LocalDateTime dateRequest,
+                             LocalDateTime dateReturn,
+                             Tariff tariff,
+                             Car car,
+                             User user) {
         Request request = Request.builder()
                 .tariff(tariff)
                 .car(car)

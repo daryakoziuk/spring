@@ -25,10 +25,20 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class RequestRepositoryIT {
 
     private static final SessionFactory sessionFactory = HibernateTestUtil.buildSessionFactory();
-    private final RequestRepository requestRepository = new RequestRepository(sessionFactory.getCurrentSession());
-    private final TariffRepository tariffRepository = new TariffRepository(sessionFactory.getCurrentSession());
-    private final UserRepository userRepository = new UserRepository(sessionFactory.getCurrentSession());
-    private final CarRepository carRepository = new CarRepository(sessionFactory.getCurrentSession());
+    private final RequestRepository requestRepository;
+    private final TariffRepository tariffRepository;
+    private final UserRepository userRepository;
+    private final CarRepository carRepository;
+
+    public RequestRepositoryIT(RequestRepository requestRepository,
+                               TariffRepository tariffRepository,
+                               UserRepository userRepository,
+                               CarRepository carRepository) {
+        this.requestRepository = requestRepository;
+        this.tariffRepository = tariffRepository;
+        this.userRepository = userRepository;
+        this.carRepository = carRepository;
+    }
 
     @BeforeAll
     static void initDb() {
@@ -119,7 +129,7 @@ public class RequestRepositoryIT {
         requestRepository.save(request);
         session.clear();
 
-        requestRepository.delete(request.getId());
+        requestRepository.delete(request);
         session.flush();
         session.clear();
         Request actual = session.find(Request.class, request.getId());

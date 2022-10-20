@@ -9,16 +9,22 @@ import org.hibernate.SessionFactory;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
+import javax.swing.*;
 import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class UserRepositoryTest {
+public class UserRepositoryIT {
 
     private static final SessionFactory sessionFactory = HibernateTestUtil.buildSessionFactory();
-    private final UserRepository userRepository = new UserRepository(sessionFactory.getCurrentSession());
+    private final UserRepository userRepository;
+
+    public UserRepositoryIT(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
 
     @BeforeAll
     static void initDb() {
@@ -49,7 +55,7 @@ public class UserRepositoryTest {
         User user = TestDatabaseImporter.getUser();
         User newUser = userRepository.save(user);
         session.flush();
-        userRepository.delete(newUser.getId());
+        userRepository.delete(newUser);
         User actual = session.find(User.class, newUser.getId());
 
         assertThat(actual).isNull();
