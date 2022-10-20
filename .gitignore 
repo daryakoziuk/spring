@@ -1,9 +1,9 @@
 
-# IntelliJ
-*.iml
+
 out/
 .idea/
 *.log
+*.iml
 *.jar
 *.war
 
