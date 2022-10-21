@@ -1,6 +1,6 @@
 package com.dmdev.service.dao;
 
-import com.dmdev.service.HibernateTestUtil;
+import com.dmdev.service.TestBeanImporter;
 import com.dmdev.service.TestDatabaseImporter;
 import com.dmdev.service.entity.Car;
 import com.dmdev.service.entity.CarCharacteristic;
@@ -8,7 +8,6 @@ import com.dmdev.service.entity.Request;
 import com.dmdev.service.entity.Tariff;
 import com.dmdev.service.entity.User;
 import org.hibernate.Session;
-import org.hibernate.SessionFactory;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -24,35 +23,24 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class RequestRepositoryIT {
 
-    private static final SessionFactory sessionFactory = HibernateTestUtil.buildSessionFactory();
-    private final RequestRepository requestRepository;
-    private final TariffRepository tariffRepository;
-    private final UserRepository userRepository;
-    private final CarRepository carRepository;
-
-    public RequestRepositoryIT(RequestRepository requestRepository,
-                               TariffRepository tariffRepository,
-                               UserRepository userRepository,
-                               CarRepository carRepository) {
-        this.requestRepository = requestRepository;
-        this.tariffRepository = tariffRepository;
-        this.userRepository = userRepository;
-        this.carRepository = carRepository;
-    }
+    private final RequestRepository requestRepository = TestBeanImporter.getRequestRepository();
+    private final TariffRepository tariffRepository = TestBeanImporter.getTariffRepository();
+    private final UserRepository userRepository = TestBeanImporter.getUserRepository();
+    private final CarRepository carRepository = TestBeanImporter.getCarRepository();
 
     @BeforeAll
     static void initDb() {
-        TestDatabaseImporter.insertDatabase(sessionFactory);
+        TestDatabaseImporter.insertDatabase(TestBeanImporter.getSessionFactory());
     }
 
     @AfterAll
     static void close() {
-        sessionFactory.close();
+        TestBeanImporter.getSessionFactory().close();
     }
 
     @Test
     void checkSaveRequest() {
-        Session session = sessionFactory.getCurrentSession();
+        Session session = TestBeanImporter.getSession();
         session.beginTransaction();
         Tariff tariff = TestDatabaseImporter.getTariff();
         tariffRepository.save(tariff);
@@ -78,7 +66,7 @@ public class RequestRepositoryIT {
 
     @Test
     void checkUpdateRequest() {
-        Session session = sessionFactory.getCurrentSession();
+        Session session = TestBeanImporter.getSession();
         session.beginTransaction();
         Tariff tariff = TestDatabaseImporter.getTariff();
         tariffRepository.save(tariff);
@@ -109,7 +97,7 @@ public class RequestRepositoryIT {
 
     @Test
     void checkDeleteRequest() {
-        Session session = sessionFactory.getCurrentSession();
+        Session session = TestBeanImporter.getSession();
         session.beginTransaction();
         Tariff tariff = TestDatabaseImporter.getTariff();
         tariffRepository.save(tariff);
@@ -140,7 +128,7 @@ public class RequestRepositoryIT {
 
     @Test
     void checkFindRequestById() {
-        Session session = sessionFactory.getCurrentSession();
+        Session session = TestBeanImporter.getSession();
         session.beginTransaction();
         Tariff tariff = TestDatabaseImporter.getTariff();
         tariffRepository.save(tariff);
@@ -168,7 +156,7 @@ public class RequestRepositoryIT {
 
     @Test
     void checkFindAll() {
-        Session session = sessionFactory.getCurrentSession();
+        Session session = TestBeanImporter.getSession();
         session.beginTransaction();
 
         List<Request> requests = requestRepository.findAll();

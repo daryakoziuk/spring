@@ -1,6 +1,5 @@
-package com.dmdev.service.config;
+package com.dmdev.service;
 
-import com.dmdev.service.util.HibernateUtil;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.context.annotation.Bean;
@@ -10,8 +9,8 @@ import org.springframework.context.annotation.Configuration;
 import java.lang.reflect.Proxy;
 
 @Configuration
-@ComponentScan(basePackages = "com.dmdev.service")
-public class ApplicationConfiguration {
+@ComponentScan(basePackages = "com.dmdev")
+public class ApplicationConfigTest {
 
     @Bean
     public Session session(SessionFactory sessionFactory) {
@@ -21,6 +20,6 @@ public class ApplicationConfiguration {
 
     @Bean
     public SessionFactory sessionFactory() {
-        return HibernateUtil.buildSessionFactory();
+        return HibernateTestUtil.buildSessionFactory();
     }
 }
