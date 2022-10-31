@@ -1,9 +1,10 @@
 package com.dmdev.service.dao;
 
 import com.dmdev.service.dto.FilterUser;
-import com.dmdev.service.dto.predicate.UserPredicate;
+import com.dmdev.service.dto.predicate.UserPredicateBuilder;
 import com.dmdev.service.entity.User;
 import com.querydsl.jpa.impl.JPAQuery;
+import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import java.util.List;
@@ -11,12 +12,14 @@ import java.util.Optional;
 
 import static com.dmdev.service.entity.QUser.user;
 
+@Repository
 public class UserRepository extends BaseRepository<Long, User> {
 
-    private UserPredicate userPredicate = new UserPredicate();
+    private final UserPredicateBuilder userPredicate;
 
-    public UserRepository(EntityManager entityManager) {
+    public UserRepository(EntityManager entityManager, UserPredicateBuilder userPredicate) {
         super(entityManager, User.class);
+        this.userPredicate = userPredicate;
     }
 
     public List<User> findUserByFilter(FilterUser filterUser) {

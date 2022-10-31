@@ -13,12 +13,12 @@ public class PredicateCriteria {
 
     private final List<Predicate> listPredicates = new ArrayList<>();
 
-    public static PredicateCriteria builder(){
+    public static PredicateCriteria builder() {
         return new PredicateCriteria();
     }
 
-    public <T> PredicateCriteria add(T object, Function<T, Predicate>function){
-        if (object!=null){
+    public <T> PredicateCriteria add(T object, Function<T, Predicate> function) {
+        if (object != null) {
             listPredicates.add(function.apply(object));
         }
         return this;

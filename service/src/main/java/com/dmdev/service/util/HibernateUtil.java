@@ -14,7 +14,7 @@ import org.hibernate.cfg.Configuration;
 @UtilityClass
 public class HibernateUtil {
 
-    private static SessionFactory buildSessionFactory() {
+    public static SessionFactory buildSessionFactory() {
         Configuration configuration = getConfiguration();
         configuration.configure();
         return configuration.buildSessionFactory();

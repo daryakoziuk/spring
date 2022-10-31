@@ -1,11 +1,10 @@
 package com.dmdev.service.dao;
 
-import com.dmdev.service.HibernateTestUtil;
 import com.dmdev.service.TestDatabaseImporter;
 import com.dmdev.service.dto.FilterUser;
 import com.dmdev.service.entity.User;
+import com.dmdev.service.TestBeanImporter;
 import org.hibernate.Session;
-import org.hibernate.SessionFactory;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -15,24 +14,23 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class UserRepositoryTest {
+public class UserRepositoryIT {
 
-    private static final SessionFactory sessionFactory = HibernateTestUtil.buildSessionFactory();
-    private final UserRepository userRepository = new UserRepository(sessionFactory.getCurrentSession());
+    private final UserRepository userRepository = TestBeanImporter.getUserRepository();
 
     @BeforeAll
     static void initDb() {
-        TestDatabaseImporter.insertDatabase(sessionFactory);
+        TestDatabaseImporter.insertDatabase(TestBeanImporter.getSessionFactory());
     }
 
     @AfterAll
     static void close() {
-        sessionFactory.close();
+        TestBeanImporter.getSessionFactory().close();
     }
 
     @Test
     void checkSaveUser() {
-        Session session = sessionFactory.getCurrentSession();
+        Session session = TestBeanImporter.getSession();
         session.beginTransaction();
         User user = TestDatabaseImporter.getUser();
 
@@ -44,12 +42,13 @@ public class UserRepositoryTest {
 
     @Test
     void checkDeleteUser() {
-        Session session = sessionFactory.getCurrentSession();
+        Session session = TestBeanImporter.getSession();
         session.beginTransaction();
         User user = TestDatabaseImporter.getUser();
         User newUser = userRepository.save(user);
         session.flush();
-        userRepository.delete(newUser.getId());
+
+        userRepository.delete(newUser);
         User actual = session.find(User.class, newUser.getId());
 
         assertThat(actual).isNull();
@@ -58,7 +57,7 @@ public class UserRepositoryTest {
 
     @Test
     void checkUpdateUser() {
-        Session session = sessionFactory.getCurrentSession();
+        Session session = TestBeanImporter.getSession();
         session.beginTransaction();
         User user = TestDatabaseImporter.getUser();
         User newUser = userRepository.save(user);
@@ -75,7 +74,7 @@ public class UserRepositoryTest {
 
     @Test
     void checkFindUserById() {
-        Session session = sessionFactory.getCurrentSession();
+        Session session = TestBeanImporter.getSession();
         session.beginTransaction();
         User user = TestDatabaseImporter.getUser();
         User newUser = userRepository.save(user);
@@ -88,7 +87,7 @@ public class UserRepositoryTest {
 
     @Test
     void checkUserByUsername() {
-        Session session = sessionFactory.getCurrentSession();
+        Session session = TestBeanImporter.getSession();
         session.beginTransaction();
 
         Optional<User> mayBeUser = userRepository.findUserByUsername("olya@gmail.com");
@@ -99,7 +98,7 @@ public class UserRepositoryTest {
 
     @Test
     void checkUserByFilter() {
-        Session session = sessionFactory.getCurrentSession();
+        Session session = TestBeanImporter.getSession();
         session.beginTransaction();
         FilterUser filterUser = FilterUser.builder()
                 .firstname("Olya")
@@ -113,7 +112,7 @@ public class UserRepositoryTest {
 
     @Test
     void checkFindAll() {
-        Session session = sessionFactory.getCurrentSession();
+        Session session = TestBeanImporter.getSession();
         session.beginTransaction();
 
         List<User> users = userRepository.findAll();

@@ -1,12 +1,11 @@
 package com.dmdev.service.dao;
 
-import com.dmdev.service.HibernateTestUtil;
+import com.dmdev.service.TestBeanImporter;
 import com.dmdev.service.TestDatabaseImporter;
 import com.dmdev.service.entity.Car;
 import com.dmdev.service.entity.CarCharacteristic;
 import com.dmdev.service.entity.TypeFuel;
 import org.hibernate.Session;
-import org.hibernate.SessionFactory;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -19,27 +18,27 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class CarCharacteristicRepositoryIT {
 
-    private static final SessionFactory sessionFactory = HibernateTestUtil.buildSessionFactory();
-    private final CarCharacteristicRepository carCharacteristicRepository = new CarCharacteristicRepository(sessionFactory.getCurrentSession());
-    private final CarRepository carRepository = new CarRepository(sessionFactory.getCurrentSession());
+    private final CarRepository carRepository = TestBeanImporter.getCarRepository();
+    private final CarCharacteristicRepository carCharacteristicRepository = TestBeanImporter.getCarCharacteristicRepository();
 
     @BeforeAll
     static void initDb() {
-        TestDatabaseImporter.insertDatabase(sessionFactory);
+        TestDatabaseImporter.insertDatabase(TestBeanImporter.getSessionFactory());
     }
 
     @AfterAll
     static void close() {
-        sessionFactory.close();
+        TestBeanImporter.getSessionFactory().close();
     }
 
     @Test
     void checkSaveCarCharacteristic() {
-        Session session = sessionFactory.getCurrentSession();
+        Session session = TestBeanImporter.getSession();
         session.beginTransaction();
         Car car = TestDatabaseImporter.getCar();
         CarCharacteristic carCharacteristic = TestDatabaseImporter.getCarCharacteristic();
         car.setCarCharacteristic(carCharacteristic);
+
         carRepository.save(car);
         session.clear();
 
@@ -49,7 +48,7 @@ public class CarCharacteristicRepositoryIT {
 
     @Test
     void checkUpdateCarCharacteristic() {
-        Session session = sessionFactory.getCurrentSession();
+        Session session = TestBeanImporter.getSession();
         session.beginTransaction();
         Car car = TestDatabaseImporter.getCar();
         CarCharacteristic carCharacteristic = TestDatabaseImporter.getCarCharacteristic();
@@ -70,15 +69,14 @@ public class CarCharacteristicRepositoryIT {
 
     @Test
     void checkDeleteCarCharacteristic() {
-        Session session = sessionFactory.getCurrentSession();
+        Session session = TestBeanImporter.getSession();
         session.beginTransaction();
         Car car = TestDatabaseImporter.getCar();
         CarCharacteristic carCharacteristic = TestDatabaseImporter.getCarCharacteristic();
         car.setCarCharacteristic(carCharacteristic);
         carRepository.save(car);
-        session.clear();
 
-        carCharacteristicRepository.delete(carCharacteristic.getId());
+        carRepository.delete(car);
         var actual = session.find(CarCharacteristic.class, carCharacteristic.getId());
 
         assertThat(actual).isNull();
@@ -87,7 +85,7 @@ public class CarCharacteristicRepositoryIT {
 
     @Test
     void checkFindCarCharacteristicById() {
-        Session session = sessionFactory.getCurrentSession();
+        Session session = TestBeanImporter.getSession();
         session.beginTransaction();
         Car car = TestDatabaseImporter.getCar();
         CarCharacteristic carCharacteristic = TestDatabaseImporter.getCarCharacteristic();
@@ -103,7 +101,7 @@ public class CarCharacteristicRepositoryIT {
 
     @Test
     void checkFindAll() {
-        Session session = sessionFactory.getCurrentSession();
+        Session session = TestBeanImporter.getSession();
         session.beginTransaction();
 
         List<CarCharacteristic> characteristics = carCharacteristicRepository.findAll();
