@@ -1,17 +1,18 @@
 package com.dmdev.service.dao;
 
-import com.dmdev.service.TestBeanImporter;
 import com.dmdev.service.TestDatabaseImporter;
 import com.dmdev.service.entity.Car;
 import com.dmdev.service.entity.CarCharacteristic;
 import com.dmdev.service.entity.Request;
 import com.dmdev.service.entity.Tariff;
 import com.dmdev.service.entity.User;
-import org.hibernate.Session;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
+import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityManager;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -21,27 +22,20 @@ import static com.dmdev.service.TestDatabaseImporter.DATE_RETURN;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+@SpringBootTest
+@ActiveProfiles("test")
+@RequiredArgsConstructor
 public class RequestRepositoryIT {
 
-    private final RequestRepository requestRepository = TestBeanImporter.getRequestRepository();
-    private final TariffRepository tariffRepository = TestBeanImporter.getTariffRepository();
-    private final UserRepository userRepository = TestBeanImporter.getUserRepository();
-    private final CarRepository carRepository = TestBeanImporter.getCarRepository();
+    private final RequestRepository requestRepository;
+    private final TariffRepository tariffRepository;
+    private final UserRepository userRepository;
+    private final CarRepository carRepository;
+    private final EntityManager entityManager;
 
-    @BeforeAll
-    static void initDb() {
-        TestDatabaseImporter.insertDatabase(TestBeanImporter.getSessionFactory());
-    }
-
-    @AfterAll
-    static void close() {
-        TestBeanImporter.getSessionFactory().close();
-    }
-
+    @Transactional
     @Test
     void checkSaveRequest() {
-        Session session = TestBeanImporter.getSession();
-        session.beginTransaction();
         Tariff tariff = TestDatabaseImporter.getTariff();
         tariffRepository.save(tariff);
         Car car = TestDatabaseImporter.getCar();
@@ -61,13 +55,11 @@ public class RequestRepositoryIT {
         requestRepository.save(request);
 
         assertThat(request.getId()).isNotNull();
-        session.getTransaction().rollback();
     }
 
+    @Transactional
     @Test
     void checkUpdateRequest() {
-        Session session = TestBeanImporter.getSession();
-        session.beginTransaction();
         Tariff tariff = TestDatabaseImporter.getTariff();
         tariffRepository.save(tariff);
         Car car = TestDatabaseImporter.getCar();
@@ -87,18 +79,14 @@ public class RequestRepositoryIT {
         request.setDateReturn(LocalDateTime.of(22, 12, 22, 15, 0));
 
         requestRepository.update(request);
-        session.flush();
-        session.clear();
-        Request actual = session.find(Request.class, request.getId());
+        Optional<Request> actual = requestRepository.findById(request.getId());
 
-        assertEquals(request.getDateReturn(), actual.getDateReturn());
-        session.getTransaction().rollback();
+        assertEquals(request.getDateReturn(), actual.get().getDateReturn());
     }
 
+    @Transactional
     @Test
     void checkDeleteRequest() {
-        Session session = TestBeanImporter.getSession();
-        session.beginTransaction();
         Tariff tariff = TestDatabaseImporter.getTariff();
         tariffRepository.save(tariff);
         Car car = TestDatabaseImporter.getCar();
@@ -115,21 +103,19 @@ public class RequestRepositoryIT {
         request.setTariff(tariff);
         request.setCar(car);
         requestRepository.save(request);
-        session.clear();
+        entityManager.flush();
+        entityManager.clear();
+        Optional<Request> forDelete = requestRepository.findById(request.getId());
 
-        requestRepository.delete(request);
-        session.flush();
-        session.clear();
-        Request actual = session.find(Request.class, request.getId());
+        requestRepository.delete(forDelete.get());
+        Optional<Request> actual = requestRepository.findById(request.getId());
 
-        assertThat(actual).isNull();
-        session.getTransaction().rollback();
+        assertThat(actual).isEmpty();
     }
 
+    @Transactional
     @Test
     void checkFindRequestById() {
-        Session session = TestBeanImporter.getSession();
-        session.beginTransaction();
         Tariff tariff = TestDatabaseImporter.getTariff();
         tariffRepository.save(tariff);
         Car car = TestDatabaseImporter.getCar();
@@ -151,17 +137,30 @@ public class RequestRepositoryIT {
 
         assertThat(mayBeRequest.get().getId()).isNotNull();
         assertEquals(request.getId(), mayBeRequest.get().getId());
-        session.getTransaction().rollback();
     }
 
+    @Transactional
     @Test
     void checkFindAll() {
-        Session session = TestBeanImporter.getSession();
-        session.beginTransaction();
+        Tariff tariff = TestDatabaseImporter.getTariff();
+        tariffRepository.save(tariff);
+        Car car = TestDatabaseImporter.getCar();
+        CarCharacteristic carCharacteristic = TestDatabaseImporter.getCarCharacteristic();
+        carCharacteristic.setCar(car);
+        carRepository.save(car);
+        User user = TestDatabaseImporter.getUser();
+        userRepository.save(user);
+        Request request = Request.builder()
+                .dateRequest(DATE_REQUEST)
+                .dateReturn(DATE_RETURN)
+                .build();
+        request.setUser(user);
+        request.setTariff(tariff);
+        request.setCar(car);
+        requestRepository.save(request);
 
         List<Request> requests = requestRepository.findAll();
 
-        assertThat(requests).hasSize(2);
-        session.getTransaction().rollback();
+        assertThat(requests).hasSize(1);
     }
 }

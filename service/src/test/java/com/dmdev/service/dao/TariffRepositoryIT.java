@@ -1,12 +1,12 @@
 package com.dmdev.service.dao;
 
-import com.dmdev.service.TestBeanImporter;
 import com.dmdev.service.TestDatabaseImporter;
 import com.dmdev.service.entity.Tariff;
-import org.hibernate.Session;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
+import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -15,70 +15,51 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+@SpringBootTest
+@ActiveProfiles("test")
+@RequiredArgsConstructor
 public class TariffRepositoryIT {
 
-    private final TariffRepository tariffRepository = TestBeanImporter.getTariffRepository();
+    private final TariffRepository tariffRepository;
 
-    @BeforeAll
-    static void initDb() {
-        TestDatabaseImporter.insertDatabase(TestBeanImporter.getSessionFactory());
-    }
-
-    @AfterAll
-    static void close() {
-        TestBeanImporter.getSessionFactory().close();
-    }
-
+    @Transactional
     @Test
     void checkSaveTariff() {
-        Session session = TestBeanImporter.getSession();
-        session.beginTransaction();
         Tariff tariff = TestDatabaseImporter.getTariff();
 
         Tariff saveTariff = tariffRepository.save(tariff);
 
         assertThat(saveTariff.getId()).isNotNull();
-        session.getTransaction().rollback();
     }
 
+    @Transactional
     @Test
     void checkUpdateTariff() {
-        Session session = TestBeanImporter.getSession();
-        session.beginTransaction();
         Tariff tariff = TestDatabaseImporter.getTariff();
         tariffRepository.save(tariff);
         tariff.setPrice(new BigDecimal(15));
 
         tariffRepository.update(tariff);
-        session.flush();
-        session.clear();
-        Tariff actualTariff = session.find(Tariff.class, tariff.getId());
+        Optional<Tariff> actualTariff = tariffRepository.findById(tariff.getId());
 
-        assertEquals(tariff.getPrice(), actualTariff.getPrice());
-        session.getTransaction().rollback();
+        assertEquals(tariff.getPrice(), actualTariff.get().getPrice());
     }
 
+    @Transactional
     @Test
     void checkDeleteTariff() {
-        Session session = TestBeanImporter.getSession();
-        session.beginTransaction();
         Tariff tariff = TestDatabaseImporter.getTariff();
         tariffRepository.save(tariff);
-        session.flush();
-        session.clear();
 
         tariffRepository.delete(tariff);
-        session.flush();
-        Tariff actual = session.find(Tariff.class, tariff.getId());
+        Optional<Tariff> actual = tariffRepository.findById(tariff.getId());
 
-        assertThat(actual).isNull();
-        session.getTransaction().rollback();
+        assertThat(actual).isEmpty();
     }
 
+    @Transactional
     @Test
     void checkFindTariffById() {
-        Session session = TestBeanImporter.getSession();
-        session.beginTransaction();
         Tariff tariff = TestDatabaseImporter.getTariff();
         tariffRepository.save(tariff);
 
@@ -86,18 +67,16 @@ public class TariffRepositoryIT {
 
         assertThat(mayBeTariff).isPresent();
         assertEquals(tariff.getId(), mayBeTariff.get().getId());
-        session.getTransaction().rollback();
     }
 
+    @Transactional
     @Test
     void checkFindAll() {
-        Session session = TestBeanImporter.getSession();
-        session.beginTransaction();
-
+        Tariff tariff = TestDatabaseImporter.getTariff();
+        tariffRepository.save(tariff);
         List<Tariff> tariffs = tariffRepository.findAll();
 
-        assertThat(tariffs).hasSize(2);
-        session.getTransaction().rollback();
+        assertThat(tariffs).hasSize(1);
     }
 }
 

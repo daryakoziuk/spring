@@ -3,103 +3,86 @@ package com.dmdev.service.dao;
 import com.dmdev.service.TestDatabaseImporter;
 import com.dmdev.service.dto.FilterUser;
 import com.dmdev.service.entity.User;
-import com.dmdev.service.TestBeanImporter;
-import org.hibernate.Session;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
+import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+@SpringBootTest
+@ActiveProfiles("test")
+@RequiredArgsConstructor
 public class UserRepositoryIT {
 
-    private final UserRepository userRepository = TestBeanImporter.getUserRepository();
+    private final UserRepository userRepository;
 
-    @BeforeAll
-    static void initDb() {
-        TestDatabaseImporter.insertDatabase(TestBeanImporter.getSessionFactory());
-    }
-
-    @AfterAll
-    static void close() {
-        TestBeanImporter.getSessionFactory().close();
-    }
-
+    @Transactional
     @Test
     void checkSaveUser() {
-        Session session = TestBeanImporter.getSession();
-        session.beginTransaction();
         User user = TestDatabaseImporter.getUser();
 
         User saveUser = userRepository.save(user);
 
         assertThat(saveUser.getId()).isNotNull();
-        session.getTransaction().rollback();
     }
 
+    @Transactional
     @Test
     void checkDeleteUser() {
-        Session session = TestBeanImporter.getSession();
-        session.beginTransaction();
         User user = TestDatabaseImporter.getUser();
         User newUser = userRepository.save(user);
-        session.flush();
 
         userRepository.delete(newUser);
-        User actual = session.find(User.class, newUser.getId());
+        Optional<User> optionalUser = userRepository.findById(newUser.getId());
 
-        assertThat(actual).isNull();
-        session.getTransaction().rollback();
+        assertThat(optionalUser).isEmpty();
     }
 
+    @Transactional
     @Test
     void checkUpdateUser() {
-        Session session = TestBeanImporter.getSession();
-        session.beginTransaction();
         User user = TestDatabaseImporter.getUser();
         User newUser = userRepository.save(user);
         newUser.setUsername("ivan@gmail.com");
 
         userRepository.update(newUser);
-        session.flush();
-        session.clear();
-        User actual = session.find(User.class, user.getId());
+        Optional<User> optionalUser = userRepository.findById(newUser.getId());
 
-        assertThat(actual.getUsername()).isEqualTo("ivan@gmail.com");
-        session.getTransaction().rollback();
+        assertThat(newUser.getUsername()).isEqualTo("ivan@gmail.com");
     }
 
+    @Transactional
     @Test
     void checkFindUserById() {
-        Session session = TestBeanImporter.getSession();
-        session.beginTransaction();
         User user = TestDatabaseImporter.getUser();
         User newUser = userRepository.save(user);
 
         Optional<User> mayBeUser = userRepository.findById(newUser.getId());
 
         assertThat(mayBeUser.get().getId()).isNotNull();
-        session.getTransaction().rollback();
     }
 
+    @Transactional
     @Test
     void checkUserByUsername() {
-        Session session = TestBeanImporter.getSession();
-        session.beginTransaction();
+        User user = TestDatabaseImporter.getUser();
+        userRepository.save(user);
 
-        Optional<User> mayBeUser = userRepository.findUserByUsername("olya@gmail.com");
+        Optional<User> mayBeUser = userRepository.findUserByUsername("olya22@gmail.com");
 
         assertThat(mayBeUser.get().getId()).isNotNull();
-        session.getTransaction().rollback();
     }
 
+    @Transactional
     @Test
     void checkUserByFilter() {
-        Session session = TestBeanImporter.getSession();
-        session.beginTransaction();
+        User user = TestDatabaseImporter.getUser();
+        userRepository.save(user);
         FilterUser filterUser = FilterUser.builder()
                 .firstname("Olya")
                 .build();
@@ -107,17 +90,15 @@ public class UserRepositoryIT {
         List<User> users = userRepository.findUserByFilter(filterUser);
 
         assertThat(users).hasSize(1);
-        session.getTransaction().rollback();
     }
 
+    @Transactional
     @Test
     void checkFindAll() {
-        Session session = TestBeanImporter.getSession();
-        session.beginTransaction();
-
+        User user = TestDatabaseImporter.getUser();
+        userRepository.save(user);
         List<User> users = userRepository.findAll();
 
-        assertThat(users).hasSize(2);
-        session.getTransaction().rollback();
+        assertThat(users).hasSize(1);
     }
 }

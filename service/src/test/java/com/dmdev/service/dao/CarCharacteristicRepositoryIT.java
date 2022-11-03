@@ -1,112 +1,97 @@
 package com.dmdev.service.dao;
 
-import com.dmdev.service.TestBeanImporter;
 import com.dmdev.service.TestDatabaseImporter;
 import com.dmdev.service.entity.Car;
 import com.dmdev.service.entity.CarCharacteristic;
 import com.dmdev.service.entity.TypeFuel;
-import org.hibernate.Session;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
+import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityManager;
 import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+@SpringBootTest
+@ActiveProfiles("test")
+@RequiredArgsConstructor
 public class CarCharacteristicRepositoryIT {
 
-    private final CarRepository carRepository = TestBeanImporter.getCarRepository();
-    private final CarCharacteristicRepository carCharacteristicRepository = TestBeanImporter.getCarCharacteristicRepository();
+    private final CarRepository carRepository;
+    private final CarCharacteristicRepository carCharacteristicRepository;
+    private final EntityManager entityManager;
 
-    @BeforeAll
-    static void initDb() {
-        TestDatabaseImporter.insertDatabase(TestBeanImporter.getSessionFactory());
-    }
-
-    @AfterAll
-    static void close() {
-        TestBeanImporter.getSessionFactory().close();
-    }
-
+    @Transactional
     @Test
     void checkSaveCarCharacteristic() {
-        Session session = TestBeanImporter.getSession();
-        session.beginTransaction();
         Car car = TestDatabaseImporter.getCar();
         CarCharacteristic carCharacteristic = TestDatabaseImporter.getCarCharacteristic();
         car.setCarCharacteristic(carCharacteristic);
 
         carRepository.save(car);
-        session.clear();
 
         assertThat(carCharacteristic.getId()).isNotNull();
-        session.getTransaction().rollback();
     }
 
+    @Transactional
     @Test
     void checkUpdateCarCharacteristic() {
-        Session session = TestBeanImporter.getSession();
-        session.beginTransaction();
         Car car = TestDatabaseImporter.getCar();
         CarCharacteristic carCharacteristic = TestDatabaseImporter.getCarCharacteristic();
         car.setCarCharacteristic(carCharacteristic);
         carRepository.save(car);
-        session.clear();
-        CarCharacteristic update = session.find(CarCharacteristic.class, carCharacteristic.getId());
-        update.setType(TypeFuel.PETROL);
+        Optional<CarCharacteristic> characteristic = carCharacteristicRepository.findById(carCharacteristic.getId());
+        characteristic.get().setType(TypeFuel.PETROL);
 
-        carCharacteristicRepository.update(update);
-        session.flush();
-        session.clear();
-        CarCharacteristic actual = session.find(CarCharacteristic.class, carCharacteristic.getId());
+        carCharacteristicRepository.update(characteristic.get());
+        Optional<CarCharacteristic> actual = carCharacteristicRepository.findById(carCharacteristic.getId());
 
-        assertEquals(update.getType(), actual.getType());
-        session.getTransaction().rollback();
+        assertEquals(characteristic.get().getType(), actual.get().getType());
     }
 
+    @Transactional
     @Test
     void checkDeleteCarCharacteristic() {
-        Session session = TestBeanImporter.getSession();
-        session.beginTransaction();
         Car car = TestDatabaseImporter.getCar();
         CarCharacteristic carCharacteristic = TestDatabaseImporter.getCarCharacteristic();
         car.setCarCharacteristic(carCharacteristic);
         carRepository.save(car);
 
         carRepository.delete(car);
-        var actual = session.find(CarCharacteristic.class, carCharacteristic.getId());
+        var actual = carCharacteristicRepository.findById(carCharacteristic.getId());
 
-        assertThat(actual).isNull();
-        session.getTransaction().rollback();
+        assertThat(actual).isEmpty();
     }
 
+    @Transactional
     @Test
     void checkFindCarCharacteristicById() {
-        Session session = TestBeanImporter.getSession();
-        session.beginTransaction();
         Car car = TestDatabaseImporter.getCar();
         CarCharacteristic carCharacteristic = TestDatabaseImporter.getCarCharacteristic();
         car.setCarCharacteristic(carCharacteristic);
         carRepository.save(car);
-        session.clear();
 
         Optional<CarCharacteristic> mayBeCharacteristic = carCharacteristicRepository.findById(carCharacteristic.getId());
 
         assertThat(mayBeCharacteristic.get().getId()).isNotNull();
-        session.getTransaction().rollback();
     }
 
+    @Transactional
     @Test
     void checkFindAll() {
-        Session session = TestBeanImporter.getSession();
-        session.beginTransaction();
+        Car car = TestDatabaseImporter.getCar();
+        CarCharacteristic carCharacteristic = TestDatabaseImporter.getCarCharacteristic();
+        car.setCarCharacteristic(carCharacteristic);
+        carRepository.save(car);
+        entityManager.clear();
 
         List<CarCharacteristic> characteristics = carCharacteristicRepository.findAll();
 
-        assertThat(characteristics).hasSize(2);
-        session.getTransaction().rollback();
+        assertThat(characteristics).hasSize(1);
     }
 }
