@@ -27,11 +27,11 @@ import java.time.LocalDate;
 @Builder
 @Entity
 @Table(name = "car_characteristic")
-public class CarCharacteristic implements BaseEntity<Integer> {
+public class CarCharacteristic implements BaseEntity<Long> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long id;
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "car_id", unique = true)

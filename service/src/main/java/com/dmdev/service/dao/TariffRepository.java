@@ -1,14 +1,15 @@
 package com.dmdev.service.dao;
 
 import com.dmdev.service.entity.Tariff;
-import org.springframework.stereotype.Repository;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
 
-import javax.persistence.EntityManager;
+import java.math.BigDecimal;
 
-@Repository
-public class TariffRepository extends BaseRepository<Integer, Tariff> {
+public interface TariffRepository extends JpaRepository<Tariff, Integer> {
 
-    public TariffRepository(EntityManager entityManager) {
-        super(entityManager, Tariff.class);
-    }
+    @Modifying(flushAutomatically = true, clearAutomatically = true)
+    @Query("update Tariff t set t.price=:price where t.id=:id")
+    int updateTariff(Integer id, BigDecimal price);
 }

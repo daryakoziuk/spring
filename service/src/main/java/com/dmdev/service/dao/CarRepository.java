@@ -1,42 +1,19 @@
 package com.dmdev.service.dao;
 
-import com.dmdev.service.dto.FilterCar;
-import com.dmdev.service.dto.predicate.CarPredicateBuilder;
 import com.dmdev.service.entity.Car;
 import com.dmdev.service.entity.Status;
-import com.querydsl.jpa.impl.JPAQuery;
-import org.springframework.stereotype.Repository;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
 
-import javax.persistence.EntityManager;
 import java.util.List;
 
-import static com.dmdev.service.entity.QCar.car;
-import static com.dmdev.service.entity.QCarCharacteristic.carCharacteristic;
+public interface CarRepository extends JpaRepository<Car, Long>, FilterCarRepository {
 
-@Repository
-public class CarRepository extends BaseRepository<Long, Car> {
+    @Query("select c from Car c where c.status=:status")
+    List<Car> findCarByStatus(Status status);
 
-    private final CarPredicateBuilder carPredicate;
-
-    public CarRepository(EntityManager entityManager, CarPredicateBuilder carPredicate) {
-        super(entityManager, Car.class);
-        this.carPredicate = carPredicate;
-    }
-
-    public List<Car> findCarByFilter(FilterCar filterCar) {
-        return new JPAQuery<Car>(getEntityManager())
-                .select(car)
-                .from(car)
-                .join(car.carCharacteristic, carCharacteristic)
-                .where(carPredicate.builder(filterCar))
-                .fetch();
-    }
-
-    public List<Car> findCarByStatus(Status status) {
-        return new JPAQuery<Car>(getEntityManager())
-                .select(car)
-                .from(car)
-                .where(car.status.eq(status))
-                .fetch();
-    }
+    @Modifying(clearAutomatically = true, flushAutomatically = true)
+    @Query("update Car c set c.status=:status where c.id=:id")
+    int updateStatus(Long id, Status status);
 }

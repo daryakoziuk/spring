@@ -1,12 +1,11 @@
 package com.dmdev.service.dao;
 
+import com.dmdev.service.IntegrationTestBase;
 import com.dmdev.service.TestDatabaseImporter;
+import com.dmdev.service.annotation.IT;
 import com.dmdev.service.entity.Tariff;
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -15,14 +14,12 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@SpringBootTest
-@ActiveProfiles("test")
+@IT
 @RequiredArgsConstructor
-public class TariffRepositoryIT {
+public class TariffRepositoryIT extends IntegrationTestBase {
 
     private final TariffRepository tariffRepository;
 
-    @Transactional
     @Test
     void checkSaveTariff() {
         Tariff tariff = TestDatabaseImporter.getTariff();
@@ -32,51 +29,40 @@ public class TariffRepositoryIT {
         assertThat(saveTariff.getId()).isNotNull();
     }
 
-    @Transactional
     @Test
     void checkUpdateTariff() {
-        Tariff tariff = TestDatabaseImporter.getTariff();
-        tariffRepository.save(tariff);
-        tariff.setPrice(new BigDecimal(15));
+        Optional<Tariff> optionalTariff = tariffRepository.findById(1);
+        optionalTariff.get().setPrice(new BigDecimal(20.0));
 
-        tariffRepository.update(tariff);
-        Optional<Tariff> actualTariff = tariffRepository.findById(tariff.getId());
+        tariffRepository.updateTariff(1, optionalTariff.get().getPrice());
+        Optional<Tariff> actualTariff = tariffRepository.findById(1);
 
-        assertEquals(tariff.getPrice(), actualTariff.get().getPrice());
+        assertThat(optionalTariff).isPresent();
+        assertEquals(optionalTariff.get().getPrice(), actualTariff.get().getPrice());
     }
 
-    @Transactional
     @Test
     void checkDeleteTariff() {
-        Tariff tariff = TestDatabaseImporter.getTariff();
-        tariffRepository.save(tariff);
+        Optional<Tariff> tariff = tariffRepository.findById(2);
 
-        tariffRepository.delete(tariff);
-        Optional<Tariff> actual = tariffRepository.findById(tariff.getId());
+        tariffRepository.delete(tariff.get());
+        Optional<Tariff> actual = tariffRepository.findById(2);
 
         assertThat(actual).isEmpty();
     }
 
-    @Transactional
     @Test
     void checkFindTariffById() {
-        Tariff tariff = TestDatabaseImporter.getTariff();
-        tariffRepository.save(tariff);
-
-        Optional<Tariff> mayBeTariff = tariffRepository.findById(tariff.getId());
+        Optional<Tariff> mayBeTariff = tariffRepository.findById(1);
 
         assertThat(mayBeTariff).isPresent();
-        assertEquals(tariff.getId(), mayBeTariff.get().getId());
     }
 
-    @Transactional
     @Test
     void checkFindAll() {
-        Tariff tariff = TestDatabaseImporter.getTariff();
-        tariffRepository.save(tariff);
         List<Tariff> tariffs = tariffRepository.findAll();
 
-        assertThat(tariffs).hasSize(1);
+        assertThat(tariffs).hasSize(2);
     }
 }
 

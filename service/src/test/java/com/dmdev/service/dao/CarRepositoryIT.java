@@ -1,15 +1,14 @@
 package com.dmdev.service.dao;
 
+import com.dmdev.service.IntegrationTestBase;
 import com.dmdev.service.TestDatabaseImporter;
+import com.dmdev.service.annotation.IT;
 import com.dmdev.service.dto.FilterCar;
 import com.dmdev.service.entity.Car;
 import com.dmdev.service.entity.CarCharacteristic;
 import com.dmdev.service.entity.Status;
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -17,14 +16,12 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@SpringBootTest
-@ActiveProfiles("test")
+@IT
 @RequiredArgsConstructor
-public class CarRepositoryIT {
+public class CarRepositoryIT extends IntegrationTestBase {
 
     private final CarRepository carRepository;
 
-    @Transactional
     @Test
     void checkSaveCar() {
         Car car = TestDatabaseImporter.getCar();
@@ -36,89 +33,59 @@ public class CarRepositoryIT {
         assertThat(car.getId()).isNotNull();
     }
 
-    @Transactional
     @Test
     void checkUpdateCar() {
-        Car car = TestDatabaseImporter.getCar();
-        CarCharacteristic carCharacteristic = TestDatabaseImporter.getCarCharacteristic();
-        carCharacteristic.setCar(car);
-        carRepository.save(car);
-        car.setStatus(Status.USED);
+        Optional<Car> car = carRepository.findById(1L);
+        car.get().setStatus(Status.USED);
 
-        carRepository.update(car);
-        Optional<Car> actual = carRepository.findById(car.getId());
+        carRepository.updateStatus(1L, car.get().getStatus());
+        Optional<Car> actual = carRepository.findById(1L);
 
-        assertEquals(car.getStatus(), actual.get().getStatus());
+        assertThat(car).isPresent();
+        assertEquals(car.get().getStatus(), actual.get().getStatus());
     }
 
-    @Transactional
     @Test
     void checkDeleteCar() {
-        Car car = TestDatabaseImporter.getCar();
-        CarCharacteristic carCharacteristic = TestDatabaseImporter.getCarCharacteristic();
-        carCharacteristic.setCar(car);
-        carRepository.save(car);
+        Optional<Car> car = carRepository.findById(3L);
 
-        carRepository.delete(car);
-        Optional<Car> actual = carRepository.findById(car.getId());
+        carRepository.delete(car.get());
+        Optional<Car> actual = carRepository.findById(3L);
 
         assertThat(actual).isEmpty();
     }
 
-    @Transactional
     @Test
     void checkFindCarBYId() {
-        Car car = TestDatabaseImporter.getCar();
-        CarCharacteristic carCharacteristic = TestDatabaseImporter.getCarCharacteristic();
-        carCharacteristic.setCar(car);
-        carRepository.save(car);
+        Optional<Car> mayBeCar = carRepository.findById(1L);
 
-        Optional<Car> mayBeCar = carRepository.findById(car.getId());
-
+        assertThat(mayBeCar).isPresent();
         assertThat(mayBeCar.get().getId()).isNotNull();
-        assertEquals(car.getId(), mayBeCar.get().getId());
     }
 
-    @Transactional
     @Test
     void checkFindAll() {
-        Car car = TestDatabaseImporter.getCar();
-        CarCharacteristic carCharacteristic = TestDatabaseImporter.getCarCharacteristic();
-        carCharacteristic.setCar(car);
-        carRepository.save(car);
-
         List<Car> cars = carRepository.findAll();
 
-        assertThat(cars).hasSize(1);
+        assertThat(cars).hasSize(4);
     }
 
-    @Transactional
     @Test
     void checkFindCarByFilter() {
-        Car car = TestDatabaseImporter.getCar();
-        CarCharacteristic carCharacteristic = TestDatabaseImporter.getCarCharacteristic();
-        carCharacteristic.setCar(car);
-        carRepository.save(car);
         FilterCar filterCar = FilterCar.builder()
-                .model(List.of("BMW", "Audi"))
+                .model(List.of("BMW", "AUDI"))
                 .build();
 
-        List<Car> carByFilter = carRepository.findCarByFilter(filterCar);
+        List<Car> carByFilter = carRepository.findAllByFilter(filterCar);
 
-        assertThat(carByFilter).hasSize(1);
+        assertThat(carByFilter).hasSize(2);
     }
 
-    @Transactional
     @Test
     void checkFindCarByStatus() {
-        Car car = TestDatabaseImporter.getCar();
-        CarCharacteristic carCharacteristic = TestDatabaseImporter.getCarCharacteristic();
-        carCharacteristic.setCar(car);
-        carRepository.save(car);
-
         List<Car> carByStatus = carRepository.findCarByStatus(Status.FREE);
 
-        assertThat(carByStatus).hasSize(1);
+        assertThat(carByStatus).hasSize(3);
     }
 }
 

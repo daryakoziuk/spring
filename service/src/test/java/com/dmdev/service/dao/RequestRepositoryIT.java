@@ -1,16 +1,13 @@
 package com.dmdev.service.dao;
 
-import com.dmdev.service.TestDatabaseImporter;
+import com.dmdev.service.IntegrationTestBase;
+import com.dmdev.service.annotation.IT;
 import com.dmdev.service.entity.Car;
-import com.dmdev.service.entity.CarCharacteristic;
 import com.dmdev.service.entity.Request;
 import com.dmdev.service.entity.Tariff;
 import com.dmdev.service.entity.User;
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import java.time.LocalDateTime;
@@ -22,10 +19,9 @@ import static com.dmdev.service.TestDatabaseImporter.DATE_RETURN;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@SpringBootTest
-@ActiveProfiles("test")
+@IT
 @RequiredArgsConstructor
-public class RequestRepositoryIT {
+public class RequestRepositoryIT extends IntegrationTestBase {
 
     private final RequestRepository requestRepository;
     private final TariffRepository tariffRepository;
@@ -33,134 +29,59 @@ public class RequestRepositoryIT {
     private final CarRepository carRepository;
     private final EntityManager entityManager;
 
-    @Transactional
     @Test
     void checkSaveRequest() {
-        Tariff tariff = TestDatabaseImporter.getTariff();
-        tariffRepository.save(tariff);
-        Car car = TestDatabaseImporter.getCar();
-        CarCharacteristic carCharacteristic = TestDatabaseImporter.getCarCharacteristic();
-        carCharacteristic.setCar(car);
-        carRepository.save(car);
-        User user = TestDatabaseImporter.getUser();
-        userRepository.save(user);
+        Optional<Tariff> tariff = tariffRepository.findById(1);
+        Optional<Car> car = carRepository.findById(1L);
+        Optional<User> user = userRepository.findById(1L);
         Request request = Request.builder()
                 .dateRequest(DATE_REQUEST)
                 .dateReturn(DATE_RETURN)
                 .build();
-        request.setUser(user);
-        request.setTariff(tariff);
-        request.setCar(car);
+        request.setUser(user.get());
+        request.setTariff(tariff.get());
+        request.setCar(car.get());
 
         requestRepository.save(request);
 
         assertThat(request.getId()).isNotNull();
     }
 
-    @Transactional
     @Test
     void checkUpdateRequest() {
-        Tariff tariff = TestDatabaseImporter.getTariff();
-        tariffRepository.save(tariff);
-        Car car = TestDatabaseImporter.getCar();
-        CarCharacteristic carCharacteristic = TestDatabaseImporter.getCarCharacteristic();
-        carCharacteristic.setCar(car);
-        carRepository.save(car);
-        User user = TestDatabaseImporter.getUser();
-        userRepository.save(user);
-        Request request = Request.builder()
-                .dateRequest(DATE_REQUEST)
-                .dateReturn(DATE_RETURN)
-                .build();
-        request.setUser(user);
-        request.setTariff(tariff);
-        request.setCar(car);
-        requestRepository.save(request);
-        request.setDateReturn(LocalDateTime.of(22, 12, 22, 15, 0));
+        Optional<Request> request = requestRepository.findById(1L);
+        request.get().setDateReturn(LocalDateTime.of(22, 12, 22, 15, 0));
 
-        requestRepository.update(request);
-        Optional<Request> actual = requestRepository.findById(request.getId());
+        requestRepository.updateDateReturn(1L, request.get().getDateReturn());
+        Optional<Request> actual = requestRepository.findById(1L);
 
-        assertEquals(request.getDateReturn(), actual.get().getDateReturn());
+        assertThat(request).isPresent();
+        assertEquals(request.get().getDateReturn(), actual.get().getDateReturn());
     }
 
-    @Transactional
     @Test
     void checkDeleteRequest() {
-        Tariff tariff = TestDatabaseImporter.getTariff();
-        tariffRepository.save(tariff);
-        Car car = TestDatabaseImporter.getCar();
-        CarCharacteristic carCharacteristic = TestDatabaseImporter.getCarCharacteristic();
-        carCharacteristic.setCar(car);
-        carRepository.save(car);
-        User user = TestDatabaseImporter.getUser();
-        userRepository.save(user);
-        Request request = Request.builder()
-                .dateRequest(DATE_REQUEST)
-                .dateReturn(DATE_RETURN)
-                .build();
-        request.setUser(user);
-        request.setTariff(tariff);
-        request.setCar(car);
-        requestRepository.save(request);
+        Optional<Request> request = requestRepository.findById(1L);
+
+        requestRepository.delete(request.get());
         entityManager.flush();
         entityManager.clear();
-        Optional<Request> forDelete = requestRepository.findById(request.getId());
-
-        requestRepository.delete(forDelete.get());
-        Optional<Request> actual = requestRepository.findById(request.getId());
+        Optional<Request> actual = requestRepository.findById(1L);
 
         assertThat(actual).isEmpty();
     }
 
-    @Transactional
     @Test
     void checkFindRequestById() {
-        Tariff tariff = TestDatabaseImporter.getTariff();
-        tariffRepository.save(tariff);
-        Car car = TestDatabaseImporter.getCar();
-        CarCharacteristic carCharacteristic = TestDatabaseImporter.getCarCharacteristic();
-        carCharacteristic.setCar(car);
-        carRepository.save(car);
-        User user = TestDatabaseImporter.getUser();
-        userRepository.save(user);
-        Request request = Request.builder()
-                .dateRequest(DATE_REQUEST)
-                .dateReturn(DATE_RETURN)
-                .build();
-        request.setUser(user);
-        request.setTariff(tariff);
-        request.setCar(car);
-        requestRepository.save(request);
+        Optional<Request> mayBeRequest = requestRepository.findById(2L);
 
-        Optional<Request> mayBeRequest = requestRepository.findById(request.getId());
-
-        assertThat(mayBeRequest.get().getId()).isNotNull();
-        assertEquals(request.getId(), mayBeRequest.get().getId());
+        assertThat(mayBeRequest).isPresent();
     }
 
-    @Transactional
     @Test
     void checkFindAll() {
-        Tariff tariff = TestDatabaseImporter.getTariff();
-        tariffRepository.save(tariff);
-        Car car = TestDatabaseImporter.getCar();
-        CarCharacteristic carCharacteristic = TestDatabaseImporter.getCarCharacteristic();
-        carCharacteristic.setCar(car);
-        carRepository.save(car);
-        User user = TestDatabaseImporter.getUser();
-        userRepository.save(user);
-        Request request = Request.builder()
-                .dateRequest(DATE_REQUEST)
-                .dateReturn(DATE_RETURN)
-                .build();
-        request.setUser(user);
-        request.setTariff(tariff);
-        request.setCar(car);
-        requestRepository.save(request);
-
         List<Request> requests = requestRepository.findAll();
 
-        assertThat(requests).hasSize(1);
+        assertThat(requests).hasSize(5);
     }
 }

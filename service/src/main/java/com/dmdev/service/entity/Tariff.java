@@ -34,7 +34,7 @@ public class Tariff implements BaseEntity<Integer> {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(name = "tariff_type", nullable = false)
+    @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private TariffType type;
 

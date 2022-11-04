@@ -1,14 +1,15 @@
 package com.dmdev.service.dao;
 
 import com.dmdev.service.entity.Request;
-import org.springframework.stereotype.Repository;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
 
-import javax.persistence.EntityManager;
+import java.time.LocalDateTime;
 
-@Repository
-public class RequestRepository extends BaseRepository<Long, Request> {
+public interface RequestRepository extends JpaRepository<Request, Long> {
 
-    public RequestRepository(EntityManager entityManager) {
-        super(entityManager, Request.class);
-    }
+    @Modifying(flushAutomatically = true, clearAutomatically = true)
+    @Query("update Request r set r.dateReturn=:dateReturn where r.id=:id")
+    int updateDateReturn(Long id, LocalDateTime dateReturn);
 }
