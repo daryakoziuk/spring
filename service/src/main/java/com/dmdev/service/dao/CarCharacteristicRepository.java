@@ -1,14 +1,14 @@
 package com.dmdev.service.dao;
 
 import com.dmdev.service.entity.CarCharacteristic;
-import org.springframework.stereotype.Repository;
+import com.dmdev.service.entity.TypeFuel;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
 
-import javax.persistence.EntityManager;
+public interface CarCharacteristicRepository extends JpaRepository<CarCharacteristic, Long> {
 
-@Repository
-public class CarCharacteristicRepository extends BaseRepository<Integer, CarCharacteristic> {
-
-    public CarCharacteristicRepository(EntityManager entityManager) {
-        super(entityManager, CarCharacteristic.class);
-    }
+    @Modifying(flushAutomatically = true, clearAutomatically = true)
+    @Query("update CarCharacteristic ch set ch.type=:type where ch.id=:id")
+    int updateCarCharacteristic(Long id, TypeFuel type);
 }

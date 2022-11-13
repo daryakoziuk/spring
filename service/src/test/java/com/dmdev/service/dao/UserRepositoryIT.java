@@ -1,27 +1,24 @@
 package com.dmdev.service.dao;
 
+import com.dmdev.service.IntegrationTestBase;
 import com.dmdev.service.TestDatabaseImporter;
+import com.dmdev.service.annotation.IT;
 import com.dmdev.service.dto.FilterUser;
 import com.dmdev.service.entity.User;
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@SpringBootTest
-@ActiveProfiles("test")
+@IT
 @RequiredArgsConstructor
-public class UserRepositoryIT {
+public class UserRepositoryIT extends IntegrationTestBase {
 
     private final UserRepository userRepository;
 
-    @Transactional
     @Test
     void checkSaveUser() {
         User user = TestDatabaseImporter.getUser();
@@ -31,74 +28,58 @@ public class UserRepositoryIT {
         assertThat(saveUser.getId()).isNotNull();
     }
 
-    @Transactional
     @Test
     void checkDeleteUser() {
-        User user = TestDatabaseImporter.getUser();
-        User newUser = userRepository.save(user);
+        Optional<User> userOptional = userRepository.findById(1L);
 
-        userRepository.delete(newUser);
-        Optional<User> optionalUser = userRepository.findById(newUser.getId());
+        userRepository.delete(userOptional.get());
+        Optional<User> optionalUser = userRepository.findById(1L);
 
         assertThat(optionalUser).isEmpty();
     }
 
-    @Transactional
     @Test
     void checkUpdateUser() {
-        User user = TestDatabaseImporter.getUser();
-        User newUser = userRepository.save(user);
-        newUser.setUsername("ivan@gmail.com");
+        Optional<User> userOptional = userRepository.findById(2L);
+        userOptional.get().setUsername("ivan@gmail.com");
 
-        userRepository.update(newUser);
-        Optional<User> optionalUser = userRepository.findById(newUser.getId());
+        userRepository.updateUsername(2L, userOptional.get().getUsername());
+        Optional<User> optionalUser = userRepository.findById(2L);
 
-        assertThat(newUser.getUsername()).isEqualTo("ivan@gmail.com");
+        assertThat(optionalUser).isPresent();
+        assertThat(optionalUser.get().getUsername()).isEqualTo("ivan@gmail.com");
     }
 
-    @Transactional
     @Test
     void checkFindUserById() {
-        User user = TestDatabaseImporter.getUser();
-        User newUser = userRepository.save(user);
+        Optional<User> mayBeUser = userRepository.findById(1L);
 
-        Optional<User> mayBeUser = userRepository.findById(newUser.getId());
-
-        assertThat(mayBeUser.get().getId()).isNotNull();
+        assertThat(mayBeUser).isPresent();
     }
 
-    @Transactional
     @Test
     void checkUserByUsername() {
-        User user = TestDatabaseImporter.getUser();
-        userRepository.save(user);
+        Optional<User> mayBeUser = userRepository.findUserByUsername("irina@gmail.com");
 
-        Optional<User> mayBeUser = userRepository.findUserByUsername("olya22@gmail.com");
-
-        assertThat(mayBeUser.get().getId()).isNotNull();
+        assertThat(mayBeUser).isPresent();
+        assertThat(mayBeUser.get().getUsername()).isEqualTo("irina@gmail.com");
     }
 
-    @Transactional
     @Test
     void checkUserByFilter() {
-        User user = TestDatabaseImporter.getUser();
-        userRepository.save(user);
         FilterUser filterUser = FilterUser.builder()
-                .firstname("Olya")
+                .firstname("Olga")
                 .build();
 
-        List<User> users = userRepository.findUserByFilter(filterUser);
+        List<User> users = userRepository.findAllByFilter(filterUser);
 
         assertThat(users).hasSize(1);
     }
 
-    @Transactional
     @Test
     void checkFindAll() {
-        User user = TestDatabaseImporter.getUser();
-        userRepository.save(user);
         List<User> users = userRepository.findAll();
 
-        assertThat(users).hasSize(1);
+        assertThat(users).hasSize(5);
     }
 }

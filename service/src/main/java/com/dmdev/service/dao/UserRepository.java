@@ -1,40 +1,18 @@
 package com.dmdev.service.dao;
 
-import com.dmdev.service.dto.FilterUser;
-import com.dmdev.service.dto.predicate.UserPredicateBuilder;
 import com.dmdev.service.entity.User;
-import com.querydsl.jpa.impl.JPAQuery;
-import org.springframework.stereotype.Repository;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
 
-import javax.persistence.EntityManager;
-import java.util.List;
 import java.util.Optional;
 
-import static com.dmdev.service.entity.QUser.user;
+public interface UserRepository extends JpaRepository<User, Long>, FilterUserRepository {
 
-@Repository
-public class UserRepository extends BaseRepository<Long, User> {
+    @Query("select u from User u where u.username=:username")
+    Optional<User> findUserByUsername(String username);
 
-    private final UserPredicateBuilder userPredicate;
-
-    public UserRepository(EntityManager entityManager, UserPredicateBuilder userPredicate) {
-        super(entityManager, User.class);
-        this.userPredicate = userPredicate;
-    }
-
-    public List<User> findUserByFilter(FilterUser filterUser) {
-        return new JPAQuery<User>(getEntityManager())
-                .select(user)
-                .from(user)
-                .where(userPredicate.builder(filterUser))
-                .fetch();
-    }
-
-    public Optional<User> findUserByUsername(String username) {
-        return Optional.ofNullable(new JPAQuery<User>(getEntityManager())
-                .select(user)
-                .from(user)
-                .where(user.username.eq(username))
-                .fetchFirst());
-    }
+    @Modifying(flushAutomatically = true, clearAutomatically = true)
+    @Query("update User u set u.username=:username where u.id=:id")
+    int updateUsername(Long id, String username);
 }
