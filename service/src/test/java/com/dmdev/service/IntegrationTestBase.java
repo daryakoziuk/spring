@@ -8,10 +8,10 @@ import org.springframework.test.context.jdbc.Sql;
 import org.testcontainers.containers.PostgreSQLContainer;
 
 @IT
-@Sql({"classpath:dml.sql"})
+@Sql("classpath:dml.sql")
 public abstract class IntegrationTestBase {
 
-    private static final PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:14");
+    private static final PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:15.1");
 
     @BeforeAll
     static void runContainer() {

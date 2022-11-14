@@ -1,4 +1,7 @@
 spring:
+  mvc:
+    format:
+      date: iso
   datasource:
     url: jdbc:postgresql://localhost:5433/postgres
     username: postgres
@@ -12,6 +15,7 @@ spring:
         current_session_context_class: thread
         hbm2ddl.auto: validate
         dialect: org.hibernate.dialect.PostgreSQL10Dialect
+    open-in-view: false
 
 logging:
   file:

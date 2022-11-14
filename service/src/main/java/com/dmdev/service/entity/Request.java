@@ -20,7 +20,7 @@ import javax.persistence.NamedEntityGraph;
 import java.time.LocalDateTime;
 
 @Data
-@ToString(exclude = {"car", "user", "tariff"})
+@ToString(exclude = {"car", "templates/user", "tariff"})
 @EqualsAndHashCode(of = {"dateRequest", "dateReturn"})
 @NoArgsConstructor
 @AllArgsConstructor
