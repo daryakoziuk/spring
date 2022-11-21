@@ -12,7 +12,9 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @RequiredArgsConstructor
 class UserServiceIT extends IntegrationTestBase {
@@ -64,8 +66,7 @@ class UserServiceIT extends IntegrationTestBase {
         Optional<UserReadDto> actual = userService.update(USER_ID, userDto);
 
         assertThat(actual).isPresent();
-        actual.ifPresent(actualUser ->
-        {
+        actual.ifPresent(actualUser -> {
             assertEquals(userDto.getLastname(), actualUser.getLastname());
             assertEquals(userDto.getFirstname(), actualUser.getFirstname());
             assertEquals(userDto.getUsername(), actualUser.getUsername());
