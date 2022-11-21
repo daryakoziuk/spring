@@ -28,7 +28,6 @@ public class RestUserController {
 
     private final UserService userService;
 
-
     @GetMapping
     public List<UserReadDto> findAll() {
         return userService.findAll();
