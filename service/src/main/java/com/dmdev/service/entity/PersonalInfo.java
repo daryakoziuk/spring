@@ -15,6 +15,5 @@ import javax.persistence.Embeddable;
 public class PersonalInfo {
 
     private String firstname;
-
     private String lastname;
 }

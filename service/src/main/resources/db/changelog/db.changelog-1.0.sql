@@ -10,6 +10,7 @@ CREATE TABLE users
     password  VARCHAR(128) NOT NULL,
     role      VARCHAR(64)  NOT NULL
 );
+--rollback DROP TABLE users;
 
 --changeset daryakoziuk:2
 CREATE TABLE car
@@ -18,6 +19,7 @@ CREATE TABLE car
     model  VARCHAR(64),
     status VARCHAR(64)
 );
+--rollback DROP TABLE car;
 
 --changeset daryakoziuk:3
 CREATE TABLE tariff
@@ -26,6 +28,7 @@ CREATE TABLE tariff
     type  VARCHAR(64),
     price DECIMAL(4, 2)
 );
+--rollback DROP TABLE tariff;
 
 --changeset daryakoziuk:4
 CREATE TABLE request
@@ -37,6 +40,7 @@ CREATE TABLE request
     car_id       BIGINT REFERENCES car (id) ON UPDATE CASCADE ON DELETE CASCADE      NOT NULL,
     user_id      BIGINT REFERENCES users (id) ON UPDATE CASCADE ON DELETE CASCADE NOT NULL
 );
+--rollback DROP TABLE request;
 
 --changeset daryakoziuk:5
 CREATE TABLE car_characteristic
@@ -49,3 +53,4 @@ CREATE TABLE car_characteristic
     date_release  DATE        NOT NULL
 
 );
+--rollback DROP TABLE car_characteristic;
