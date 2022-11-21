@@ -9,7 +9,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.FieldError;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -18,8 +17,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
-import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/users")
@@ -56,7 +53,7 @@ public class UserController {
     public String create(@Validated UserCreateDto userCreateDto,
                          BindingResult bindingResult,
                          RedirectAttributes redirectAttributes) {
-        if (bindingResult.hasErrors()){
+        if (bindingResult.hasErrors()) {
             redirectAttributes.addFlashAttribute("user", userCreateDto);
             redirectAttributes.addFlashAttribute("errors", bindingResult.getAllErrors());
             return "redirect:/users/registration";
@@ -66,10 +63,9 @@ public class UserController {
 
     @PostMapping("/{id}/update")
     public String update(@PathVariable("id") Long id, @ModelAttribute @Validated UserEditDto userEditDto, BindingResult bindingResult) {
-       if (bindingResult.hasErrors()){
-
-           return "redirect: /users/{id}/update";
-       }
+        if (bindingResult.hasErrors()) {
+            return "redirect: /users/{id}/update";
+        }
         return userService.update(id, userEditDto)
                 .map(it -> "redirect:/users/{id}")
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
