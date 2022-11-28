@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
-public class UserEditMapper implements Mapper<UserEditDto, User> {
+public class UserEditMapper implements MapperUpdate<UserEditDto, User> {
 
     @Override
     public User map(UserEditDto userCreateEditDto, User toObject) {

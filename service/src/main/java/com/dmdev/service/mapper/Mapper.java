@@ -2,11 +2,6 @@ package com.dmdev.service.mapper;
 
 public interface Mapper<F, T> {
 
-    default T map(F f) {
-        return null;
-    }
+    T map(F f);
 
-    default T map(F f, T toObject) {
-        return toObject;
-    }
 }
