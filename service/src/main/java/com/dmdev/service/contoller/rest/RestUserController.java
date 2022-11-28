@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.springframework.http.ResponseEntity.noContent;
+import static org.springframework.http.ResponseEntity.notFound;
 
 @RestController
 @RequestMapping("/api/v1/users")
@@ -52,8 +53,6 @@ public class RestUserController {
                         .contentLength(content.length)
                         .body(content))
                 .orElseGet(noContent()::build);
-
-
     }
 
     @PostMapping
@@ -72,6 +71,6 @@ public class RestUserController {
     public ResponseEntity<?> delete(@PathVariable("id") Long id) {
         return userService.delete(id)
                 ? noContent().build()
-                : ResponseEntity.notFound().build();
+                : notFound().build();
     }
 }
