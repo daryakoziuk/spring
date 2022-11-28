@@ -7,6 +7,8 @@ import com.dmdev.service.dto.UserReadDto;
 import com.dmdev.service.entity.Role;
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Test;
+import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Optional;
@@ -42,8 +44,9 @@ class UserServiceIT extends IntegrationTestBase {
         UserCreateDto userCreateDto = new UserCreateDto(
                 "test@mail.ru",
                 "test",
+                new MockMultipartFile("test", new byte[0]),
                 "test",
-                "test",
+                "12345678",
                 Role.USER
         );
 
@@ -60,6 +63,7 @@ class UserServiceIT extends IntegrationTestBase {
         UserEditDto userDto = new UserEditDto(
                 "test@mail.ru",
                 "test",
+                new MockMultipartFile("test", new byte[0]),
                 "test",
                 Role.USER
         );

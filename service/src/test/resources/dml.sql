@@ -21,8 +21,8 @@ INSERT INTO users (id, username, firstname, lastname, password, role)
 VALUES (1, 'irina@gmail.com', 'Irina', 'Popova', '123456', 'USER'),
        (2, 'vladimir@gmail.com', 'Vladimir', 'Vladimirov', '654321', 'USER'),
        (3, 'olga@gmail.com', 'Olga', 'Orlova', '0987', 'ADMIN'),
-       (4, 'szeta@gmail.com', 'Svetlana', 'Svetikova', '3333', 'ADMIN'),
-       (5, 'sergey@gmail.com', 'Sergey', 'Serov', '111111', 'USER');
+       (4, 'szeta@gmail.com', 'Svetlana', 'Svetikova', '{noop}3333', 'ADMIN'),
+       (5, 'test11@gmail.com', 'Sergey', 'Serov', '{bcrypt}$2a$10$ZtOlYJxVEctj5.Bsrg.TK.PivQqn7YXpNDOHcIj04OcWrWigC2cyS', 'USER');
 SELECT SETVAL('users_id_seq', (SELECT MAX(id) FROM users));
 
 INSERT INTO request (id, date_request, date_return, tariff_id, car_id, user_id)

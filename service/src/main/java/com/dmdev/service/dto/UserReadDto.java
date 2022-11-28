@@ -7,6 +7,7 @@ import lombok.Value;
 public class UserReadDto {
 
     Long id;
+    String image;
     String username;
     String firstname;
     String lastname;

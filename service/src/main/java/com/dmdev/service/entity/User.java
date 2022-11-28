@@ -45,6 +45,8 @@ public class User implements BaseEntity<Long> {
 
     private PersonalInfo personalInfo;
 
+    private String image;
+
     @Column(nullable = false)
     private String password;
 

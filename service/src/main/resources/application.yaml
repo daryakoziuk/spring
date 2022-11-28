@@ -1,4 +1,32 @@
+app:
+  image:
+    path: /Users/darakozuk/Desktop/spring/images
+
+open:
+  api:
+    authorizationUrl: http://localhost:8080/oauth2/authorization/google
+    tokenUrl: https://www.googleapis.com/oauth2/v4/token
+
+
+springdoc:
+  swagger-ui:
+    oauth:
+      client-id: 621311263911-ad1dntboocualebe057f01p7vsrf8gsi.apps.googleusercontent.com
+      client-secret: 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
+      scopes: openid,email,profile
+    oauth2-redirect-url: http://localhost:8080/swagger-ui/oauth2-redirect.html
+
 spring:
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: 621311263911-ad1dntboocualebe057f01p7vsrf8gsi.apps.googleusercontent.com
+            client-secret: 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
+            redirect-uri: http://localhost:8080/login/oauth2/code/google
+            scope: openid,email,profile
+
   mvc:
     format:
       date: iso
@@ -23,3 +51,6 @@ logging:
     path: /
   level:
     root: info
+
+
+

@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Cars</title>
+</head>
+<body>
+<div th:insert="~{fragment::header}"></div>
+<form action="/cars">
+    <div>
+        <label for="model">Model:
+            <select id="model" name="model" multiple>
+                <option th:each="car : ${cars.content}"
+                        th:value="${car.model}"
+                        th:text="${car.model}">Model</option>
+            </select>
+        </label>
+    </div><br>
+    <label for="engineVolume">Engine volume:
+        <input id="engineVolume" type="text" name="engineVolume" th:value="${filter.engineVolume}">
+    </label><br>
+    <label for="transmission">Type transmission:
+    <div th:each="transmission : ${transmissions}">
+        <input id="transmission" type="checkbox" name="transmission"
+               th:value="${transmission}">
+        <label th:for="${transmission}" th:text="${transmission}">Type transmission</label>
+    </div>
+    </label><br>
+    <label for="type">Type fuel:
+        <div th:each="type : ${types}">
+            <input id="type" type="checkbox" name="type"
+                   th:value="${type}">
+            <label th:for="${type}" th:text="${type}">Type fuel</label>
+        </div>
+    </label><br>
+    <label for="dateRelease">Date release:
+        <input id="dateRelease" type="date" name="dateRelease" th:value="${filter.dateRelease}">
+    </label>
+    <div>
+        <label for="page">Page:
+            <input id="page" type="number" name="page" th:value="${cars.metadata.page}">
+        </label>
+        <label for="size">Size:
+            <input id="size" type="number" name="size" th:value="${cars.metadata.size}">
+        </label>
+    </div>
+    <button type="submit">Filter</button>
+</form>
+<div th:each="car : ${cars.content}">
+    <a th:href="@{'/cars/' + ${car.id}}" th:text="${car.model+' '+car.carCharacteristic.dateRelease}">Car</a>
+</div>
+</body>
+</html>

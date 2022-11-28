@@ -24,14 +24,29 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
-        <lombok.version>1.18.22</lombok.version>
         <querydsl.version>5.0.0</querydsl.version>
         <hibernate.version>5.6.11.Final</hibernate.version>
         <javax.persistence.api.version>2.2</javax.persistence.api.version>
+        <spring.security.version>5.7.3</spring.security.version>
     </properties>
 
     <dependencyManagement>
         <dependencies>
+            <dependency>
+                <groupId>org.springframework.security</groupId>
+                <artifactId>spring-security-oauth2-client</artifactId>
+                <version>${spring.security.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.security</groupId>
+                <artifactId>spring-security-oauth2-jose</artifactId>
+                <version>${spring.security.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.security</groupId>
+                <artifactId>spring-security-test</artifactId>
+                <version>${spring.security.version}</version>
+            </dependency>
             <dependency>
                 <groupId>org.springdoc</groupId>
                 <artifactId>springdoc-openapi-ui</artifactId>
@@ -50,7 +65,7 @@
             <dependency>
                 <groupId>org.hibernate</groupId>
                 <artifactId>hibernate-jpamodelgen</artifactId>
-                <version>5.6.11.Final</version>
+                <version>${hibernate.version}</version>
                 <scope>provided</scope>
                 <optional>true</optional>
             </dependency>
@@ -58,12 +73,6 @@
                 <groupId>com.querydsl</groupId>
                 <artifactId>querydsl-apt</artifactId>
                 <version>${querydsl.version}</version>
-                <scope>provided</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.projectlombok</groupId>
-                <artifactId>lombok</artifactId>
-                <version>${lombok.version}</version>
                 <scope>provided</scope>
             </dependency>
 
@@ -99,7 +108,7 @@
                             <path>
                                 <groupId>org.projectlombok</groupId>
                                 <artifactId>lombok</artifactId>
-                                <version>${lombok.version}</version>
+                                <version>1.18.24</version>
                             </path>
                             <path>
                                 <groupId>com.querydsl</groupId>
