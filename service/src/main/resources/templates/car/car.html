@@ -7,40 +7,65 @@
 <body>
 <div th:insert="~{fragment::header}"></div>
 <form th:action="@{/cars/{carId}/update(carId=${car.id})}" enctype="multipart/form-data" method="post" >
-    <label for="model">Model:
+    <label for="model">
+        <span th:text="#{car.model}">Model:</span>
         <input id="model" type="text" name="model" th:value="${car.model}">
     </label><br>
     <div th:if="${car.image}">
         <img th:src="@{/api/v1/cars/{carId}/image(carId=${car.id})}" alt="Car image">
     </div>
-    <label for="image">Image:
+    <label for="image">
+        <span th:text="#{car.image}">Image:</span>
         <input id="image" type="file" name="image">
     </label><br>
-    <label for="engineVolume">Engine volume:
+    <label for="engineVolume">
+        <span th:text="#{car.engineVolume}">Engine volume:</span>
         <input id="engineVolume" type="text" name="engineVolume" th:value="${car.carCharacteristic.engineVolume}">
     </label><br>
-    <label for="transmission">Transmission:
+    <label for="transmission">
+        <span th:text="#{car.transmission}">Transmission:</span>
         <input id="transmission" type="text" name="transmission" th:value="${car.carCharacteristic.transmission}">
     </label><br>
-    <label for="status">Status:
+    <label for="status">
+        <span th:text="#{car.status}">Status:</span>
         <div th:each="status : ${statuses}">
             <input id="status" type="radio" name="status" th:value="${status}" th:checked="${status==car.status}" >
             <label th:for="${status}" th:text="${status}">Status:</label>
         </div>
     </label><br>
-    <label for="type">Type fuel:
+    <label for="type">
+        <span th:text="#{car.typeFuel}">Type fuel:</span>
     <div th:each="type : ${types}">
         <input id="type" type="radio" name="type" th:value="${type}" th:checked="${type==car.carCharacteristic.type}" >
         <label th:for="${type}" th:text="${type}">Type fuel:</label>
     </div>
     </label><br>
-    <label for="dateRelease">Date release:
+    <label for="dateRelease">
+        <span th:text="#{car.dateRelease}">Date release:</span>
         <input id="dateRelease" type="date" name="dateRelease" th:value="${car.carCharacteristic.dateRelease}">
     </label><br>
-    <button type="submit">Update</button>
+    <button type="submit" th:if="${#authentication.authorities[0].getAuthority() == 'ADMIN'}">
+        <span th:text="#{general.update}">Update</span>
+    </button>
 </form>
 <form th:action="@{/cars/{carId}/delete(carId=${car.id})}" method="post">
-    <button type="submit">Delete</button>
+    <button type="submit" th:if="${#authentication.authorities[0].getAuthority() == 'ADMIN'}">
+        <span th:text="#{general.delete}">Delete</span>
+    </button>
 </form>
+<form action="/requests/create">
+    <a href="/requests">
+        <button type="submit">
+            <span th:text="#{request.book}">Book</span>
+        </button>
+    </a>
+</form>
+<br>
+<form action="/cars">
+    <a href="/cars">
+        <span th:text="#{general.cars}">Cars</span>
+    </a>
+</form>
+<div th:insert="~{fragment::back}"></div>
 </body>
 </html>

@@ -18,7 +18,7 @@ import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;
 public class ImageService {
 
     @Value("${app.image.path}")
-    private String path;
+    private final String path;
 
     @SneakyThrows
     public void upload(String imagePath, InputStream content) {

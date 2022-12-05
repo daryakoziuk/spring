@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Request</title>
+</head>
+<body>
+<div th:insert="~{fragment::header}"></div>
+<form th:action="@{/requests/{requestId}/update(requestId=${request.id})}"
+      th:if="${#authentication.authorities[0].getAuthority() == 'ADMIN' or
+      #authentication.principal.username == user.username}" method="post">
+    <label for="dateRequest"><span th:text="#{request.dateRequest}">Date request:</span>
+        <input id="dateRequest" type="datetime-local" name="dateRequest" th:value="${request.dateRequest}">
+    </label><br>
+    <label for="dateReturn"><span th:text="#{request.dateReturn}">Date return:</span>
+        <input id="dateReturn" type="datetime-local" name="dateReturn" th:value="${request.dateReturn}">
+    </label><br>
+    <div>
+        <label for="tariff">
+            <span th:text="#{request.tariff}">Tariff:</span>
+            <select id="tariff" name="tariffId">
+                <option></option>
+                <option th:each="tariff : ${tariffs}"
+                        th:value="${tariff.id}"
+                        th:selected="${tariff.id == request.tariff.id}"
+                        th:text="${tariff.type}">Tariff
+                </option>
+            </select>
+        </label>
+    </div>
+    <br>
+    <div>
+        <label for="user">
+            <span th:text="#{request.user}">User:</span>
+            <select id="user" name="userId">
+                <option></option>
+                <option th:each="user : ${users}"
+                        th:value="${user.id}"
+                        th:selected="${user.id == request.user.id}"
+                        th:text="${user.firstname+' '+user.lastname}">User
+                </option>
+            </select>
+        </label>
+    </div>
+    <br>
+    <div>
+        <label for="car">
+            <span th:text="#{request.car}">Car:</span>
+            <select id="car" name="carId">
+                <option></option>
+                <option th:each="car : ${cars}"
+                        th:value="${car.id}"
+                        th:selected="${car.id == request.car.id}"
+                        th:text="${car.model+' '+car.carCharacteristic.dateRelease}">Car
+                </option>
+            </select>
+        </label>
+    </div>
+    <br>
+    <label for="status"><span th:text="#{request.status}">Status:</span>
+        <input id="status" type="text" name="status" th:value="${request.status}">
+    </label><br>
+    <button type="submit" name="action" value="update"
+            th:if="${#authentication.authorities[0].getAuthority() == 'ADMIN' or
+      #authentication.principal.username == user.username}">
+        <span th:text="#{general.update}">Update</span>
+    </button>
+    <button type="submit" name="action" value="close"
+            th:if="${#authentication.authorities[0].getAuthority() == 'ADMIN' or
+      #authentication.principal.username == user.username}">
+        <span th:text="#{general.close}">Close</span>
+    </button>
+</form>
+<form th:action="@{/requests/{requestId}/delete(requestId=${request.id})}"
+      th:if="${#authentication.authorities[0].getAuthority() == 'ADMIN' or
+      #authentication.principal.username == user.username}" method="post">
+    <button type="submit">
+        <span th:text="#{general.delete}">Delete</span>
+    </button>
+</form>
+<form th:action="@{/requests/{requestId}/calculate(requestId=${request.id})}">
+    <a href="/calculate">
+        <button type="submit">
+            <span th:text="#{request.calculate}">Calculate</span>
+        </button>
+    </a>
+</form>
+<br>
+<form action="/requests">
+    <a href="/requests">
+        <span th:text="#{general.requests}">Requests</span>
+    </a>
+</form>
+<div th:insert="~{fragment::back}"></div>
+</body>
+</html>

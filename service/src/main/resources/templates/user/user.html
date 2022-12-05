@@ -6,30 +6,45 @@
 </head>
 <body>
 <div th:insert="~{fragment::header}"></div>
-<form th:action="@{/users/{userId}/update(userId=${user.id})}" enctype="multipart/form-data" method="post">
-    <label for="username">Username:
+<form th:action="@{/users/{userId}/update(userId=${user.id})}" enctype="multipart/form-data"
+      th:if="${#authentication.authorities[0].getAuthority() == 'ADMIN'
+      or #authentication.principal.username==user.username}" method="post">
+    <label for="username"><span th:text="#{user.username}">Username:</span>
         <input id="username" type="text" name="username" th:value="${user.username}">
     </label><br>
     <div th:if="${user.image}">
         <img th:src="@{/api/v1/users/{userId}/avatar(userId=${user.id})}" alt="User image">
     </div>
-    <label for="image">Image:
+    <label for="image"><span th:text="#{user.image}">Image:</span>
         <input id="image" type="file" name="image">
     </label><br>
-    <label for="firstname">Firstname:
+    <label for="firstname"><span th:text="#{user.firstname}">Firstname:</span>
         <input id="firstname" type="text" name="firstname" th:value="${user.firstname}">
     </label><br>
-    <label for="lastname">Lastname:
+    <label for="lastname"><span th:text="#{user.lastname}">Lastname:</span>
         <input id="lastname" type="text" name="lastname" th:value="${user.lastname}">
     </label><br>
     <div th:each="role : ${roles}">
         <input th:id="${role}" type="radio" name="role" th:value="${role}" th:checked="${role==user.role}">
         <label th:for="${role}" th:text="${role}">Role name</label>
     </div>
-    <button type="submit">Update</button>
+    <button type="submit">
+        <span th:text="#{general.update}">Update</span>
+    </button>
 </form>
-<form th:action="@{/users/{userId}/delete(userId=${user.id})}" th:if="${user.role.name()=='ADMIN'}" method="post">
-    <button type="submit">Delete</button>
+<form th:action="@{/users/{userId}/delete(userId=${user.id})}"
+      th:if="${#authentication.authorities[0].getAuthority() == 'ADMIN'
+      or #authentication.principal.username==user.username}" method="post">
+    <button type="submit">
+        <span th:text="#{general.delete}">Delete</span>
+    </button>
 </form>
+<br>
+<form action="/users">
+    <a href="/users">
+        <span th:text="#{general.users}">Users</span>
+    </a>
+</form>
+<div th:insert="~{fragment::back}"></div>
 </body>
 </html>

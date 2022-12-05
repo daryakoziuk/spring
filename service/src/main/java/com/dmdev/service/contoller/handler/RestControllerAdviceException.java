@@ -1,5 +1,6 @@
 package com.dmdev.service.contoller.handler;
 
+import com.dmdev.service.exception.CustomException;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -54,6 +55,16 @@ public class RestControllerAdviceException {
     public ErrorResponse badCredentialsException(BadCredentialsException badCredentialsException) {
         return ErrorResponse.builder()
                 .message(Collections.singletonList(badCredentialsException.getMessage()))
+                .httpStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+                .dateTime(LocalDateTime.now())
+                .build();
+    }
+
+    @ExceptionHandler(CustomException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ErrorResponse customException(CustomException exception) {
+        return ErrorResponse.builder()
+                .message(Collections.singletonList(exception.getMessage()))
                 .httpStatus(HttpStatus.INTERNAL_SERVER_ERROR)
                 .dateTime(LocalDateTime.now())
                 .build();

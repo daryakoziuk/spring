@@ -10,7 +10,7 @@ import org.testcontainers.containers.PostgreSQLContainer;
 
 @IT
 @Sql("classpath:dml.sql")
-@WithMockUser(username = "test11@gmail.com", password = "testtesttest", authorities = {"USER", "ADMIN"})
+@WithMockUser(username = "test11@gmail.com", password = "testtesttest", authorities = {"ADMIN"})
 public abstract class IntegrationTestBase {
 
     private static final PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:15.1");

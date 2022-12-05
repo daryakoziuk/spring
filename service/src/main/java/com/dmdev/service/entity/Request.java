@@ -9,6 +9,8 @@ import lombok.ToString;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -38,6 +40,9 @@ public class Request implements BaseEntity<Long> {
 
     @Column(nullable = false)
     private LocalDateTime dateReturn;
+
+    @Enumerated(EnumType.STRING)
+    private RequestStatus status;
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "tariff_id")
