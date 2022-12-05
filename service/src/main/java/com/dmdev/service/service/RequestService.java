@@ -36,7 +36,7 @@ public class RequestService implements CrudService<RequestReadDto, Request, Long
     @Transactional
     public RequestReadDto create(RequestCreateEditDto createEditDto) {
         Optional<Car> optionalCar = carRepository.findById(createEditDto.getCarId());
-        if (optionalCar.get().getStatus().equals(Status.USED)){
+        if (optionalCar.get().getStatus().equals(Status.USED)) {
             return null;
         }
         optionalCar.ifPresent(car -> {
