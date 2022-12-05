@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Car</title>
+</head>
+<body>
+<div th:insert="~{fragment::header}"></div>
+<form th:action="@{/cars/{carId}/update(carId=${car.id})}" enctype="multipart/form-data" method="post" >
+    <label for="model">Model:
+        <input id="model" type="text" name="model" th:value="${car.model}">
+    </label><br>
+    <div th:if="${car.image}">
+        <img th:src="@{/api/v1/cars/{carId}/image(carId=${car.id})}" alt="Car image">
+    </div>
+    <label for="image">Image:
+        <input id="image" type="file" name="image">
+    </label><br>
+    <label for="engineVolume">Engine volume:
+        <input id="engineVolume" type="text" name="engineVolume" th:value="${car.carCharacteristic.engineVolume}">
+    </label><br>
+    <label for="transmission">Transmission:
+        <input id="transmission" type="text" name="transmission" th:value="${car.carCharacteristic.transmission}">
+    </label><br>
+    <label for="status">Status:
+        <div th:each="status : ${statuses}">
+            <input id="status" type="radio" name="status" th:value="${status}" th:checked="${status==car.status}" >
+            <label th:for="${status}" th:text="${status}">Status:</label>
+        </div>
+    </label><br>
+    <label for="type">Type fuel:
+    <div th:each="type : ${types}">
+        <input id="type" type="radio" name="type" th:value="${type}" th:checked="${type==car.carCharacteristic.type}" >
+        <label th:for="${type}" th:text="${type}">Type fuel:</label>
+    </div>
+    </label><br>
+    <label for="dateRelease">Date release:
+        <input id="dateRelease" type="date" name="dateRelease" th:value="${car.carCharacteristic.dateRelease}">
+    </label><br>
+    <button type="submit">Update</button>
+</form>
+<form th:action="@{/cars/{carId}/delete(carId=${car.id})}" method="post">
+    <button type="submit">Delete</button>
+</form>
+</body>
+</html>

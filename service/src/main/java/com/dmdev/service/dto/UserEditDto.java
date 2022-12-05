@@ -3,6 +3,7 @@ package com.dmdev.service.dto;
 import com.dmdev.service.contoller.validation.EnumName;
 import com.dmdev.service.entity.Role;
 import lombok.Value;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
@@ -16,6 +17,8 @@ public class UserEditDto {
 
     @NotBlank(message = "Firstname can't be blank")
     String firstname;
+
+    MultipartFile image;
 
     @NotBlank(message = "Lastname can't be blank")
     String lastname;

@@ -5,6 +5,10 @@ import com.dmdev.service.entity.PersonalInfo;
 import com.dmdev.service.entity.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.Optional;
+import java.util.function.Predicate;
 
 @Component
 @RequiredArgsConstructor
@@ -16,11 +20,14 @@ public class UserEditMapper implements MapperUpdate<UserEditDto, User> {
         return toObject;
     }
 
-    private void copy(UserEditDto userCreateEditDto, User user, PersonalInfo personalInfo) {
-        personalInfo.setFirstname(userCreateEditDto.getFirstname());
-        personalInfo.setLastname(userCreateEditDto.getLastname());
-        user.setUsername(userCreateEditDto.getUsername());
+    private void copy(UserEditDto editDto, User user, PersonalInfo personalInfo) {
+        personalInfo.setFirstname(editDto.getFirstname());
+        personalInfo.setLastname(editDto.getLastname());
+        user.setUsername(editDto.getUsername());
         user.setPersonalInfo(personalInfo);
-        user.setRole(userCreateEditDto.getRole());
+        user.setRole(editDto.getRole());
+        Optional.ofNullable(editDto.getImage())
+                .filter(Predicate.not(MultipartFile::isEmpty))
+                .ifPresent(image -> user.setImage(image.getOriginalFilename()));
     }
 }

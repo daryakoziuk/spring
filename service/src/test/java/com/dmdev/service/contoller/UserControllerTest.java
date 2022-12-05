@@ -44,8 +44,7 @@ class UserControllerTest extends IntegrationTestBase {
                 .andExpectAll(
                         view().name("user/user"),
                         status().is2xxSuccessful(),
-                        model().attributeExists("user", "roles")
-                );
+                        model().attributeExists("user", "roles"));
     }
 
     @Test
@@ -55,25 +54,22 @@ class UserControllerTest extends IntegrationTestBase {
                         .param("firstname", "Test")
                         .param("lastname", "TestTest")
                         .param("password", "testtest")
-                        .param("role", "ADMIN")
-                )
+                        .param("role", "ADMIN"))
                 .andExpectAll(
                         status().is3xxRedirection(),
-                        redirectedUrlPattern("/users/{\\d+}")
-                );
+                        redirectedUrlPattern("/users/{\\d+}"));
     }
 
     @Test
     void update() throws Exception {
         mockMvc.perform(post("/users/{id}/update", USER_ID)
-                        .param("username", "test")
-                        .param("firstname", "Test")
-                        .param("lastname", "TestTest")
+                        .param("firstname", "Irina22")
+                        .param("lastname", "Popova")
+                        .param("username", "irina@gmail.com")
                         .param("role", "ADMIN"))
                 .andExpectAll(
-                        redirectedUrlPattern("/users/{\\d+}"),
-                        status().is3xxRedirection());
-
+                        status().is3xxRedirection(),
+                        redirectedUrlPattern("/users/{\\d+}"));
     }
 
     @Test

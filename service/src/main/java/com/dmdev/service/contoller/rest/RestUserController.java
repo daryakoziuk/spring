@@ -5,7 +5,9 @@ import com.dmdev.service.dto.UserEditDto;
 import com.dmdev.service.dto.UserReadDto;
 import com.dmdev.service.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -20,6 +22,10 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
+import java.util.Optional;
+
+import static org.springframework.http.ResponseEntity.noContent;
+import static org.springframework.http.ResponseEntity.notFound;
 
 @RestController
 @RequestMapping("/api/v1/users")
@@ -39,6 +45,16 @@ public class RestUserController {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
     }
 
+    @GetMapping("/{id}/avatar")
+    public ResponseEntity<byte[]> findAvatar(@PathVariable("id") Long id){
+        return userService.findImage(id)
+                .map(content -> ResponseEntity.ok()
+                        .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_OCTET_STREAM_VALUE)
+                        .contentLength(content.length)
+                        .body(content))
+                .orElseGet(noContent()::build);
+    }
+
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public UserReadDto create(@Validated @RequestBody UserCreateDto userCreateDto) {
@@ -54,7 +70,7 @@ public class RestUserController {
     @DeleteMapping("/{id}")
     public ResponseEntity<?> delete(@PathVariable("id") Long id) {
         return userService.delete(id)
-                ? ResponseEntity.noContent().build()
-                : ResponseEntity.notFound().build();
+                ? noContent().build()
+                : notFound().build();
     }
 }

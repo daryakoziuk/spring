@@ -14,7 +14,7 @@ public class FilterCar {
 
     private List<String>model;
     private Integer engineVolume;
-    private TypeTransmission transmission;
-    private TypeFuel type;
+    private List<TypeTransmission> transmission;
+    private List<TypeFuel> type;
     private LocalDate dateRelease;
 }
