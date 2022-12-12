@@ -10,7 +10,7 @@
     <a th:href="@{'/tariffs/' + ${tariff.id}}" th:text="${tariff.type+' '+tariff.price}">Tariff</a>
 </div>
 <br>
-<form action="/tariffs/create">
+<form action="/tariffs/create" th:if="${#authentication.authorities[0].getAuthority() == 'ADMIN'}">
     <button type="submit">
         <span th:text="#{tariff.create}">Create</span>
     </button>

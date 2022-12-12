@@ -39,7 +39,7 @@ public class Car implements BaseEntity<Long> {
     private String image;
 
     @Fetch(FetchMode.JOIN)
-    @OneToOne(mappedBy = "car", cascade = CascadeType.ALL, fetch = FetchType.LAZY, optional = false)
+    @OneToOne(mappedBy = "car", cascade = CascadeType.ALL, optional = false)
     private CarCharacteristic carCharacteristic;
 
     @Column(nullable = false)

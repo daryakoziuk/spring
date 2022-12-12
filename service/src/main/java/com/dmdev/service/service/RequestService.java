@@ -4,11 +4,11 @@ import com.dmdev.service.dao.CarRepository;
 import com.dmdev.service.dao.RequestRepository;
 import com.dmdev.service.dto.RequestCreateEditDto;
 import com.dmdev.service.dto.RequestReadDto;
-import com.dmdev.service.entity.Car;
 import com.dmdev.service.entity.Request;
 import com.dmdev.service.entity.RequestStatus;
 import com.dmdev.service.entity.Status;
 import com.dmdev.service.entity.TariffType;
+import com.dmdev.service.exception.ServiceException;
 import com.dmdev.service.mapper.Mapper;
 import com.dmdev.service.mapper.RequestCreateEditMapper;
 import lombok.Getter;
@@ -35,18 +35,16 @@ public class RequestService implements CrudService<RequestReadDto, Request, Long
 
     @Transactional
     public RequestReadDto create(RequestCreateEditDto createEditDto) {
-        Optional<Car> optionalCar = carRepository.findById(createEditDto.getCarId());
-        if (optionalCar.get().getStatus().equals(Status.USED)) {
-            return null;
-        }
-        optionalCar.ifPresent(car -> {
-            car.setStatus(Status.USED);
-            carRepository.saveAndFlush(car);
-        });
         return Optional.of(createEditDto)
                 .map(requestCreateEditMapper::map)
                 .map(request -> {
                     request.setStatus(RequestStatus.OPEN);
+                    carRepository.findById(createEditDto.getCarId())
+                            .filter(car -> Status.FREE.equals(car.getStatus()))
+                            .map(car -> {
+                                car.setStatus(Status.USED);
+                                return carRepository.saveAndFlush(car);
+                            }).orElseThrow(()-> new ServiceException("Car is busy"));
                     return repository.save(request);
                 })
                 .map(mapper::map)
@@ -55,17 +53,15 @@ public class RequestService implements CrudService<RequestReadDto, Request, Long
 
     @Transactional
     public void close(Long id, RequestCreateEditDto createEditDto) {
-        carRepository.findById(createEditDto.getCarId())
-                .map(car -> {
-                    car.setStatus(Status.FREE);
-                    return carRepository.saveAndFlush(car);
-                });
-        Optional<Request> optionalRequest = repository.findById(id);
-        optionalRequest.ifPresent(request -> {
+        repository.findById(id).ifPresent(request -> {
+            carRepository.findByIdForRequest(createEditDto.getCarId())
+                    .ifPresent(car -> {
+                        car.setStatus(Status.FREE);
+                        carRepository.saveAndFlush(car);
+                    });
             requestCreateEditMapper.map(createEditDto, request);
             request.setStatus(RequestStatus.CLOSE);
             repository.saveAndFlush(request);
-            mapper.map(request);
         });
     }
 
@@ -79,16 +75,14 @@ public class RequestService implements CrudService<RequestReadDto, Request, Long
 
     public Optional<BigDecimal> calculate(Long id) {
         return repository.findById(id)
-                .map(request -> {
-                    if (request.getTariff().getType().equals(TariffType.DAYTIME)) {
-                        return request.getTariff().getPrice()
+                .map(request ->
+                        TariffType.DAYTIME.equals(request.getTariff().getType())
+                                ? request.getTariff().getPrice()
                                 .multiply(new BigDecimal(ChronoUnit.DAYS
-                                        .between(request.getDateRequest(), request.getDateReturn())));
-                    } else {
-                        return request.getTariff().getPrice()
+                                        .between(request.getDateRequest(), request.getDateReturn())))
+                                : request.getTariff().getPrice()
                                 .multiply(new BigDecimal(ChronoUnit.HOURS
-                                        .between(request.getDateRequest(), request.getDateReturn())));
-                    }
-                });
+                                        .between(request.getDateRequest(), request.getDateReturn())))
+                );
     }
 }

@@ -22,7 +22,6 @@ public class RequestCreateEditMapper implements Mapper<RequestCreateEditDto, Req
     private final UserRepository userRepository;
     private final TariffRepository tariffRepository;
 
-
     @Override
     public Request map(RequestCreateEditDto requestCreateEditDto) {
         Request request = new Request();

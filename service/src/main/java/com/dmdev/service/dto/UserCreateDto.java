@@ -12,20 +12,20 @@ import javax.validation.constraints.Size;
 @Value
 public class UserCreateDto {
 
-    @Email(message = "Must have an email address format")
-    @NotBlank(message = "Username can't be blank")
+    @Email
+    @NotBlank
     String username;
 
-    @NotBlank(message = "Firstname can't be blank")
+    @NotBlank
     String firstname;
 
     MultipartFile image;
 
-    @NotBlank(message = "Lastname can't be blank")
+    @NotBlank
     String lastname;
 
-    @NotBlank(message = "Password can't be blank")
-    @Size(min = 8, message = "Password must contains at least 8 characters")
+    @NotBlank
+    @Size(min = 8)
     String password;
 
     @EnumName(regexp = "(USER|ADMIN)")

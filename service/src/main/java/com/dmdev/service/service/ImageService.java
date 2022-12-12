@@ -3,6 +3,7 @@ package com.dmdev.service.service;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import java.io.InputStream;
@@ -18,7 +19,7 @@ import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;
 public class ImageService {
 
     @Value("${app.image.path}")
-    private String path;
+    private final String path;
 
     @SneakyThrows
     public void upload(String imagePath, InputStream content) {

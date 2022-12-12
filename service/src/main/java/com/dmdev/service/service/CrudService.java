@@ -7,7 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Optional;
 
-@Transactional
+@Transactional(readOnly = true)
 public interface CrudService<D, T, I> {
 
     JpaRepository<T, I> getRepository();
@@ -25,6 +25,7 @@ public interface CrudService<D, T, I> {
                 .map(getMapper()::map);
     }
 
+    @Transactional
     default boolean delete(I id) {
         return getRepository().findById(id)
                 .map(entity -> {

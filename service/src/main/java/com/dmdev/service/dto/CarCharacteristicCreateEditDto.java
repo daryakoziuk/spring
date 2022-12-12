@@ -12,20 +12,20 @@ import java.time.LocalDate;
 @Value
 public class CarCharacteristicCreateEditDto {
 
-    @NotBlank(message = "Engine volume can't be blank")
+    @NotBlank
     Integer engineVolume;
 
     Long carId;
 
     @EnumName(regexp = "(AUTOMATIC|MANUAL)")
-    @NotBlank(message = "Transmission fuel can't be blank")
+    @NotBlank
     TypeTransmission transmission;
 
     @EnumName(regexp = "( PETROL|DIESEL|ELECTRIC)")
-    @NotBlank(message = "Type fuel can't be blank")
+    @NotBlank
     TypeFuel type;
 
     @DateTimeFormat(pattern = "yyyy-MM-dd")
-    @NotBlank(message = "Date release can't be blank")
+    @NotBlank
     LocalDate dateRelease;
 }

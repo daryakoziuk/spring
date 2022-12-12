@@ -33,9 +33,9 @@ public class SecurityConfiguration {
                 .authorizeHttpRequests(urlConfig -> urlConfig
                         .antMatchers(HttpMethod.POST, "/users").permitAll()
                         .antMatchers("/users/registration", "/login").permitAll()
-                        .antMatchers("/cars/{\\d}/delete", "/users/{\\d}/delete", "/requests/{\\d}/delete",
-                                "/cars/{\\d}/update", "/requests/{\\d}/close")
-                        .hasAuthority(ADMIN.getAuthority())
+                        .antMatchers("/cars/{\\d}/delete", "/users/{\\d}/delete",
+                                "/requests/{\\d}/delete", "/cars/{\\d}/update",
+                                "/requests/{\\d}/close", "/cars/create") .hasAuthority(ADMIN.getAuthority())
                         .anyRequest().authenticated())
                 .logout(logout -> logout
                         .logoutUrl("/logout")
