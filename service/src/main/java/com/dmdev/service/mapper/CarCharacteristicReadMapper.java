@@ -9,12 +9,12 @@ public class CarCharacteristicReadMapper implements Mapper<CarCharacteristic, Ca
 
     @Override
     public CarCharacteristicReadDto map(CarCharacteristic carCharacteristic) {
-        return new CarCharacteristicReadDto(
-                carCharacteristic.getId(),
-                carCharacteristic.getEngineVolume(),
-                carCharacteristic.getTransmission(),
-                carCharacteristic.getType(),
-                carCharacteristic.getDateRelease()
-        );
+        return CarCharacteristicReadDto.builder()
+                .id(carCharacteristic.getId())
+                .engineVolume(carCharacteristic.getEngineVolume())
+                .transmission(carCharacteristic.getTransmission())
+                .type(carCharacteristic.getType())
+                .dateRelease(carCharacteristic.getDateRelease())
+                .build();
     }
 }

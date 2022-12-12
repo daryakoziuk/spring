@@ -18,8 +18,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @RequiredArgsConstructor
 class CarControllerTest extends IntegrationTestBase {
 
-    private final MockMvc mockMvc;
     private static final Long CAR_ID = 1L;
+    private final MockMvc mockMvc;
 
     @Test
     void findAll() throws Exception {

@@ -13,11 +13,9 @@ import java.util.Locale;
 @Configuration
 public class WebConfiguration implements WebMvcConfigurer {
 
-    @Bean
-    public LocaleResolver localeResolver() {
-        var localeResolver = new CookieLocaleResolver();
-        localeResolver.setDefaultLocale(Locale.US);
-        return localeResolver;
+    @Override
+    public void addInterceptors(InterceptorRegistry registry) {
+        registry.addInterceptor(localeChangeInterceptor());
     }
 
     @Bean
@@ -27,8 +25,10 @@ public class WebConfiguration implements WebMvcConfigurer {
         return interceptor;
     }
 
-    @Override
-    public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(localeChangeInterceptor());
+    @Bean
+    public LocaleResolver localeResolver() {
+        var localeResolver = new CookieLocaleResolver();
+        localeResolver.setDefaultLocale(Locale.US);
+        return localeResolver;
     }
 }

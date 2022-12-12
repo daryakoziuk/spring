@@ -58,6 +58,9 @@
 <div th:if="${errors}">
     <p style="color: red" th:each="error : ${errors}" th:text="${error.defaultMessage}">Error message</p>
 </div>
+<div th:if="${exception}">
+    <p style="color: red" th:text="${exception.message}">Error message</p>
+</div>
 <br>
 <form action="/requests">
     <a href="/requests">

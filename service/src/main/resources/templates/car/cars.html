@@ -55,7 +55,7 @@
         <span th:text="#{general.filter}">Filter</span>
     </button>
 </form>
-<form action="/cars/create">
+<form action="/cars/create" th:if="${#authentication.authorities[0].getAuthority() == 'ADMIN'}">
     <button type="submit">
         <span th:text="#{car.create}">Create</span>
     </button>

@@ -1,5 +1,8 @@
 package com.dmdev.service;
 
+import com.dmdev.service.dto.CarCharacteristicReadDto;
+import com.dmdev.service.dto.CarCreateEditDto;
+import com.dmdev.service.dto.CarReadDto;
 import com.dmdev.service.entity.Car;
 import com.dmdev.service.entity.CarCharacteristic;
 import com.dmdev.service.entity.PersonalInfo;
@@ -11,10 +14,12 @@ import com.dmdev.service.entity.TypeFuel;
 import com.dmdev.service.entity.TypeTransmission;
 import com.dmdev.service.entity.User;
 import lombok.experimental.UtilityClass;
+import org.springframework.mock.web.MockMultipartFile;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 
 @UtilityClass
@@ -39,7 +44,16 @@ public class TestDatabaseImporter {
 
     public static Car getCar() {
         return Car.builder()
+                .id(1L)
                 .model("Audi")
+                .status(Status.FREE)
+                .carCharacteristic(CarCharacteristic.builder()
+                        .dateRelease(LocalDate.now())
+                        .transmission(TypeTransmission.MANUAL)
+                        .type(TypeFuel.DIESEL)
+                        .engineVolume(1900)
+                        .build())
+                .image("image")
                 .status(Status.FREE)
                 .build();
     }
@@ -57,6 +71,46 @@ public class TestDatabaseImporter {
         return Tariff.builder()
                 .price(new BigDecimal(12))
                 .type(TariffType.HOURLY)
+                .build();
+    }
+
+    public static List<Car> getCars() {
+        return List.of(getCar());
+    }
+
+    public static List<CarReadDto> getCarsDto() {
+        return List.of(CarReadDto.builder()
+                .carCharacteristic(CarCharacteristicReadDto.builder()
+                        .id(1L)
+                        .type(TypeFuel.DIESEL)
+                        .transmission(TypeTransmission.MANUAL)
+                        .dateRelease(LocalDate.now())
+                        .build())
+                .model("AUDI")
+                .status(Status.USED)
+                .image("image")
+                .build());
+    }
+
+    public static CarReadDto getCarReadDto() {
+        return CarReadDto.builder()
+                .carCharacteristic(CarCharacteristicReadDto.builder().build())
+                .id(1L)
+                .image("image")
+                .model("AUDI")
+                .status(Status.FREE)
+                .build();
+    }
+
+    public static CarCreateEditDto getCarCreateEditDto() {
+        return CarCreateEditDto.builder()
+                .dateRelease(LocalDate.now())
+                .engineVolume(1900)
+                .image(new MockMultipartFile("image", new byte[0]))
+                .model("BMW")
+                .status(Status.FREE)
+                .transmission(TypeTransmission.MANUAL)
+                .type(TypeFuel.DIESEL)
                 .build();
     }
 }

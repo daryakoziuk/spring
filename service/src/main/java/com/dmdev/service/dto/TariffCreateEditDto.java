@@ -15,6 +15,6 @@ public class TariffCreateEditDto {
     @EnumName(regexp = "(DAYTIME|HOURLY)")
     TariffType type;
 
-    @NotNull(message = "Price can't be blank")
+    @NotNull
     BigDecimal price;
 }

@@ -15,11 +15,12 @@ public class CarReadMapper implements Mapper<Car, CarReadDto> {
     @Override
     public CarReadDto map(Car car) {
         CarCharacteristicReadDto carCharacteristicReadDto = carCharacteristicReadMapper.map(car.getCarCharacteristic());
-        return new CarReadDto(
-                car.getId(),
-                carCharacteristicReadDto,
-                car.getModel(),
-                car.getStatus(),
-                car.getImage());
+        return CarReadDto.builder()
+                .id(car.getId())
+                .carCharacteristic(carCharacteristicReadDto)
+                .model(car.getModel())
+                .status(car.getStatus())
+                .image(car.getImage())
+                .build();
     }
 }

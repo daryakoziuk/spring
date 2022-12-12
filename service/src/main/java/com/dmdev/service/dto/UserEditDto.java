@@ -11,16 +11,16 @@ import javax.validation.constraints.NotBlank;
 @Value
 public class UserEditDto {
 
-    @Email(message = "Must have an email address format")
-    @NotBlank(message = "Username can't be blank")
+    @Email
+    @NotBlank
     String username;
 
-    @NotBlank(message = "Firstname can't be blank")
+    @NotBlank
     String firstname;
 
     MultipartFile image;
 
-    @NotBlank(message = "Lastname can't be blank")
+    @NotBlank
     String lastname;
 
     @EnumName(regexp = "(USER|ADMIN)")
