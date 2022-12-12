@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Start</title>
+</head>
+<body>
+<div th:insert="~{fragment :: header}"></div>
+
+<div>
+    <a href="/users">
+        <span th:text="#{general.users}">Users</span>
+    </a>
+</div>
+<div>
+    <a href="/cars">
+        <span th:text="#{general.cars}">Cars</span>
+    </a>
+</div>
+<div>
+    <a href="/requests">
+        <span th:text="#{general.requests}">Requests</span>
+    </a>
+</div>
+<div>
+    <a href="/tariffs">
+        <span th:text="#{general.tariff}">Tariffs</span>
+    </a>
+</div>
+</body>
+</html>

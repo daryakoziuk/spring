@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Request</title>
+</head>
+<body>
+<div th:insert="~{fragment::header}"></div>
+<form action="/requests" method="post">
+    <label for="dateRequest"><span th:text="#{request.dateRequest}">Date request:</span>
+        <input id="dateRequest" type="datetime-local" name="dateRequest" th:value="${request.dateRequest}">
+    </label><br>
+    <label for="dateReturn"><span th:text="#{request.dateReturn}">Date return:</span>
+        <input id="dateReturn" type="datetime-local" name="dateReturn" th:value="${request.dateReturn}">
+    </label><br>
+    <div>
+        <label for="tariff">
+            <span th:text="#{request.tariff}">Tariff:</span>
+            <select id="tariff" name="tariffId">
+                <option></option>
+                <option th:each="tariff : ${tariffs}"
+                        th:value="${tariff.id}"
+                        th:selected="${tariff.id == request.tariffId}"
+                        th:text="${tariff.type}">Tariff</option>
+            </select>
+        </label>
+    </div>
+    <br>
+    <div>
+        <label for="user">
+            <span th:text="#{request.user}">User:</span>
+            <select id="user" name="userId">
+                <option></option>
+                <option th:each="user : ${users}"
+                        th:value="${user.id}"
+                        th:selected="${user.id == request.userId}"
+                        th:text="${user.firstname+' '+user.lastname}">User</option>
+            </select>
+        </label>
+    </div>
+    <br>
+    <div>
+        <label for="car">
+            <span th:text="#{request.car}">Car:</span>
+            <select id="car" name="carId">
+                <option></option>
+                <option th:each="car : ${cars}"
+                        th:value="${car.id}"
+                        th:text="${car.model+' '+car.carCharacteristic.dateRelease}">Car</option>
+            </select>
+        </label>
+    </div>
+    <br>
+    <button type="submit">
+        <span th:text="#{car.create}">Create</span>
+    </button>
+</form>
+<div th:if="${errors}">
+    <p style="color: red" th:each="error : ${errors}" th:text="${error.defaultMessage}">Error message</p>
+</div>
+<br>
+<form action="/requests">
+    <a href="/requests">
+        <span th:text="#{general.requests}">Requests</span>
+    </a>
+</form>
+<div th:insert="~{fragment::back}"></div>
+</body>
+</html>

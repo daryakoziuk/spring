@@ -4,6 +4,7 @@ import com.dmdev.service.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -20,7 +21,6 @@ import java.util.Set;
 import static com.dmdev.service.entity.Role.ADMIN;
 
 @Configuration
-@EnableMethodSecurity
 @RequiredArgsConstructor
 public class SecurityConfiguration {
 
@@ -31,8 +31,10 @@ public class SecurityConfiguration {
         http
                 .csrf().disable()
                 .authorizeHttpRequests(urlConfig -> urlConfig
+                        .antMatchers(HttpMethod.POST, "/users").permitAll()
                         .antMatchers("/users/registration", "/login").permitAll()
-                        .antMatchers("/cars/{\\d}/delete", "/users/{\\d}/delete")
+                        .antMatchers("/cars/{\\d}/delete", "/users/{\\d}/delete", "/requests/{\\d}/delete",
+                                "/cars/{\\d}/update", "/requests/{\\d}/close")
                         .hasAuthority(ADMIN.getAuthority())
                         .anyRequest().authenticated())
                 .logout(logout -> logout
@@ -40,10 +42,10 @@ public class SecurityConfiguration {
                         .logoutSuccessUrl("/login"))
                 .formLogin(login -> login
                         .loginPage("/login")
-                        .defaultSuccessUrl("/users"))
+                        .defaultSuccessUrl("/start"))
                 .oauth2Login(config -> config
                         .loginPage("/login")
-                        .defaultSuccessUrl("/users")
+                        .defaultSuccessUrl("/start")
                         .userInfoEndpoint(userInfo -> userInfo.oidcUserService(oidcUserService())));
 
         return http.build();

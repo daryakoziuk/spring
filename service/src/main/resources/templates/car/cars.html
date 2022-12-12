@@ -8,7 +8,8 @@
 <div th:insert="~{fragment::header}"></div>
 <form action="/cars">
     <div>
-        <label for="model">Model:
+        <label for="model">
+            <span th:text="#{car.model}">Model:</span>
             <select id="model" name="model" multiple>
                 <option th:each="car : ${cars.content}"
                         th:value="${car.model}"
@@ -16,38 +17,54 @@
             </select>
         </label>
     </div><br>
-    <label for="engineVolume">Engine volume:
+    <label for="engineVolume">
+        <span th:text="#{car.engineVolume}">Engine volume:</span>
         <input id="engineVolume" type="text" name="engineVolume" th:value="${filter.engineVolume}">
     </label><br>
-    <label for="transmission">Type transmission:
+    <label for="transmission">
+        <span th:text="#{car.transmission}">Transmission:</span>
     <div th:each="transmission : ${transmissions}">
         <input id="transmission" type="checkbox" name="transmission"
                th:value="${transmission}">
         <label th:for="${transmission}" th:text="${transmission}">Type transmission</label>
     </div>
     </label><br>
-    <label for="type">Type fuel:
+    <label for="type">
+        <span th:text="#{car.typeFuel}">Type fuel:</span>
         <div th:each="type : ${types}">
             <input id="type" type="checkbox" name="type"
                    th:value="${type}">
             <label th:for="${type}" th:text="${type}">Type fuel</label>
         </div>
     </label><br>
-    <label for="dateRelease">Date release:
+    <label for="dateRelease">
+        <span th:text="#{car.dateRelease}">Date release:</span>
         <input id="dateRelease" type="date" name="dateRelease" th:value="${filter.dateRelease}">
     </label>
     <div>
-        <label for="page">Page:
+        <label for="page">
+            <span th:text="#{general.page}">Page:</span>
             <input id="page" type="number" name="page" th:value="${cars.metadata.page}">
         </label>
-        <label for="size">Size:
+        <label for="size">
+            <span th:text="#{general.size}">Size:</span>
             <input id="size" type="number" name="size" th:value="${cars.metadata.size}">
         </label>
     </div>
-    <button type="submit">Filter</button>
+    <button type="submit">
+        <span th:text="#{general.filter}">Filter</span>
+    </button>
+</form>
+<form action="/cars/create">
+    <button type="submit">
+        <span th:text="#{car.create}">Create</span>
+    </button>
 </form>
 <div th:each="car : ${cars.content}">
     <a th:href="@{'/cars/' + ${car.id}}" th:text="${car.model+' '+car.carCharacteristic.dateRelease}">Car</a>
 </div>
+<br>
+<br>
+<div th:insert="~{fragment::back}"></div>
 </body>
 </html>

@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Tariff</title>
+</head>
+<body>
+<form th:action="@{/tariffs}" method="post">
+    <label for="price">
+        <span th:text="#{tariff.price}">Price:</span>
+        <input id="price" type="text" name="price" th:value="${tariff.price}">
+    </label><br>
+    <label for="type">
+        <span th:text="#{tariff.type}">Tariff type:</span>
+    <div th:each="type : ${types}">
+        <input id="type" type="radio" name="type" th:value="${type}" th:checked="${type==tariff.type}">
+        <label th:for="${type}" th:text="${type}">Tariff type</label>
+    </div>
+    </label>
+    <button type="submit">
+        <span th:text="#{general.create}">Create</span>
+    </button>
+</form>
+<div th:if="${errors}">
+    <p style="color: red" th:each="error : ${errors}" th:text="${error.defaultMessage}">Error message</p>
+</div>
+</body>
+</html>

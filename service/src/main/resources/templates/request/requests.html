@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Requests</title>
+</head>
+<body>
+<div th:insert="~{fragment::header}"></div>
+<div th:each="request : ${requests}">
+    <a th:href="@{'/requests/' + ${request.id}}" th:text="${request.id+' '+request.dateRequest}">Request</a>
+</div>
+<form action="/requests/create">
+    <button type="submit">
+        <span th:text="#{request.create}">Create</span>
+    </button>
+</form>
+</body>
+<br>
+<br>
+<div th:insert="~{fragment::back}"></div>
+</html>

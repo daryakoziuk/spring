@@ -24,6 +24,7 @@ public class CarCreateEditMapper implements MapperUpdate<CarCreateEditDto, Car>,
     public Car map(CarCreateEditDto carCreateEditDto) {
         Car car = new Car();
         CarCharacteristic carCharacteristic = new CarCharacteristic();
+        carCharacteristic.setCar(car);
         getCar(carCreateEditDto, car, carCharacteristic);
         return car;
     }

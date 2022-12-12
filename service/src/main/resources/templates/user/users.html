@@ -8,8 +8,10 @@
 <div th:insert="~{fragment::header}"></div>
 <div th:each="user : ${users}">
     <a th:href="@{'/users/' + ${user.id}}" th:text="${user.username}">User</a>
-
 </div>
+<br>
+<br>
+<div th:insert="~{fragment::back}"></div>
 
 </body>
 </html>

@@ -5,27 +5,39 @@
     <title>User</title>
 </head>
 <body>
+<div th:insert="~{fragment::locale}"></div>
 <form th:action="@{/users}" enctype="multipart/form-data" method="post">
-    <label for="username">Username:
+    <label for="username">
+        <span th:text="#{user.username}">Username:</span>
         <input id="username" type="text" name="username" th:value="${user.username}">
     </label><br>
-    <label for="image">Image:
+    <label for="image">
+        <span th:text="#{user.image}">Image:</span>
         <input id="image" type="file" name="image">
     </label><br>
-    <label for="password">Password:
+    <label for="password">
+        <span th:text="#{login.password}">Password:</span>
         <input id="password" type="password" name="password" th:value="${user.password}">
     </label><br>
-    <label for="firstname">Firstname:
+    <label for="firstname">
+        <span th:text="#{user.firstname}">Firstname:</span>
         <input id="firstname" type="text" name="firstname" th:value="${user.firstname}">
     </label><br>
-    <label for="lastname">Lastname:
+    <label for="lastname">
+        <span th:text="#{user.lastname}">Lastname:</span>
         <input id="lastname" type="text" name="lastname" th:value="${user.lastname}">
     </label><br>
-    <div th:each="role : ${roles}">
-        <input th:id="${role}" type="radio" name="role" th:value="${role}" th:checked="${role==user.role}">
-        <label th:for="${role}" th:text="${role}">Role name</label>
-    </div>
-    <button type="submit">Create</button>
+    <label for="role">
+        <span th:text="#{user.role}">Role:</span>
+        <div th:each="role : ${roles}">
+            <input id="role" type="radio" name="role" th:value="${role}" th:checked="${role==user.role}">
+            <label th:for="${role}" th:text="${role}">Role name</label>
+        </div>
+    </label>
+    <br>
+    <button type="submit">
+        <span th:text="#{general.create}">Create</span>
+    </button>
 </form>
 <div th:if="${errors}">
     <p style="color: red" th:each="error : ${errors}" th:text="${error.defaultMessage}">Error message</p>

@@ -8,8 +8,6 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
-import org.hibernate.annotations.LazyToOne;
-import org.hibernate.annotations.LazyToOneOption;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -53,7 +51,8 @@ public class Car implements BaseEntity<Long> {
 
     @OneToMany(
             mappedBy = "car",
-            cascade = CascadeType.ALL
+            cascade = CascadeType.ALL,
+            fetch = FetchType.LAZY
     )
     @Builder.Default
     private List<Request> requests = new ArrayList<>();

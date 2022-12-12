@@ -7,8 +7,9 @@ import com.dmdev.service.dto.FilterCar;
 import com.dmdev.service.dto.predicate.CarPredicateBuilder;
 import com.dmdev.service.entity.Car;
 import com.dmdev.service.mapper.CarCreateEditMapper;
-import com.dmdev.service.mapper.CarReadMapper;
+import com.dmdev.service.mapper.Mapper;
 import com.querydsl.core.types.Predicate;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.data.domain.Page;
@@ -18,46 +19,37 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.List;
 import java.util.Optional;
 
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
-public class CarService {
+@Getter
+public class CarService implements CrudService<CarReadDto, Car, Long> {
 
     private final CarPredicateBuilder carPredicateBuilder;
-    private final CarRepository carRepository;
-    private final CarReadMapper carReadMapper;
+    private final CarRepository repository;
+    private final Mapper<Car, CarReadDto> mapper;
     private final CarCreateEditMapper carCreateEditMapper;
     private final ImageService imageService;
 
     public Page<CarReadDto> findAll(FilterCar filter, Pageable pageable) {
         Predicate predicate = carPredicateBuilder.builder(filter);
-        return carRepository.findAll(predicate, pageable)
-                .map(carReadMapper::map);
-    }
-
-    public List<CarReadDto> findAll() {
-        return carRepository.findAll()
-                .stream().map(carReadMapper::map)
-                .toList();
-    }
-
-    public Optional<CarReadDto> findById(Long id) {
-        return carRepository.findById(id)
-                .map(carReadMapper::map);
+        return repository.findAll(predicate, pageable)
+                .map(mapper::map);
     }
 
     @Transactional
     public Optional<CarReadDto> update(Long id, CarCreateEditDto car) {
-        return carRepository.findById(id)
+        return repository.findById(id)
                 .map(entity -> {
-                    uploadImage(car.getImage());
+                    if (car.getImage() != null) {
+                        uploadImage(car.getImage());
+                    }
                     return carCreateEditMapper.map(car, entity);
                 })
-                .map(carRepository::saveAndFlush)
-                .map(carReadMapper::map);
+                .map(repository::saveAndFlush)
+                .map(mapper::map);
     }
 
     @Transactional
@@ -67,23 +59,12 @@ public class CarService {
                     uploadImage(dto.getImage());
                     return carCreateEditMapper.map(dto);
                 })
-                .map(carRepository::save)
-                .map(carReadMapper::map).orElseThrow();
-    }
-
-    @Transactional
-    public boolean delete(Long id) {
-        return carRepository.findById(id)
-                .map(car -> {
-                    carRepository.delete(car);
-                    carRepository.flush();
-                    return true;
-                })
-                .orElse(false);
+                .map(repository::save)
+                .map(mapper::map).orElseThrow();
     }
 
     public Optional<byte[]> findImage(Long id) {
-        return carRepository.findById(id)
+        return repository.findById(id)
                 .map(Car::getImage)
                 .filter(StringUtils::hasText)
                 .flatMap(imageService::get);

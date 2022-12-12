@@ -1,10 +1,8 @@
 package com.dmdev.service;
 
-import com.dmdev.service.dao.CarRepository;
 import com.dmdev.service.entity.Car;
 import com.dmdev.service.entity.CarCharacteristic;
 import com.dmdev.service.entity.PersonalInfo;
-import com.dmdev.service.entity.Request;
 import com.dmdev.service.entity.Role;
 import com.dmdev.service.entity.Status;
 import com.dmdev.service.entity.Tariff;
@@ -12,7 +10,6 @@ import com.dmdev.service.entity.TariffType;
 import com.dmdev.service.entity.TypeFuel;
 import com.dmdev.service.entity.TypeTransmission;
 import com.dmdev.service.entity.User;
-import lombok.RequiredArgsConstructor;
 import lombok.experimental.UtilityClass;
 
 import java.math.BigDecimal;

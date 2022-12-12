@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Tariff</title>
+</head>
+<body>
+<div th:insert="~{fragment::header}"></div>
+<form th:action="@{/tariffs/{tariffId}/update(tariffId=${tariff.id})}" method="post">
+    <label for="price">
+        <span th:text="#{tariff.price}">Price:</span>
+        <input id="price" type="text" name="price" th:value="${tariff.price}">
+    </label><br>
+    <label for="type">
+        <span th:text="#{tariff.type}">Tariff type:</span>
+        <div th:each="type : ${types}">
+            <input id="type" type="radio" name="type" th:value="${type}" th:checked="${type==tariff.type}">
+            <label th:for="${type}" th:text="${type}">Tariff type</label>
+        </div>
+    </label>
+    <br>
+    <button type="submit" th:if="${#authentication.authorities[0].getAuthority() == 'ADMIN'}">
+        <span th:text="#{general.update}">Update</span>
+    </button>
+</form>
+<form th:action="@{/tariffs/{tariffId}/delete(tariffId=${tariff.id})}" method="post">
+    <button type="submit" th:if="${#authentication.authorities[0].getAuthority() == 'ADMIN'}">
+        <span th:text="#{general.delete}">Delete</span>
+    </button>
+</form>
+<br>
+<form action="/tariffs">
+    <a href="/tariffs">
+        <span th:text="#{general.tariff}">Tariffs</span>
+    </a>
+</form>
+<div th:insert="~{fragment::back}"></div>
+</body>
+</html>
